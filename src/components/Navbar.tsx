@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Menu, X, FileStack, Scissors, Minimize2, FileText, FileOutput, RotateCw, Type, Tally4, Image as ImageIcon, Stamp } from 'lucide-react';
+import { Logo } from './Logo';
 
 const TOOLS = [
   { id:'merge',        path:'/merge-pdf',       name:'Merge PDF',       icon:FileStack,  cat:'organize' },
@@ -31,9 +32,11 @@ export const Navbar: React.FC = () => {
     <header className="glass sticky top-0 z-50" style={{ borderBottom: '1px solid var(--color-border)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 focus-ring rounded-lg">
-          <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white font-bold text-sm" style={{ background: 'linear-gradient(135deg,#3b82f6,#6366f1)' }}>P</div>
-          <span className="font-bold text-xl" style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}>pdf<span style={{ color: 'var(--color-brand)' }}>markr</span></span>
+        <Link to="/" className="flex items-center gap-2.5 focus-ring rounded-lg">
+          <div className="w-10 h-10 flex items-center justify-center">
+            <Logo />
+          </div>
+          <span className="font-bold text-2xl tracking-tight" style={{ color: '#e11d48' }}>pdf<span style={{ color: '#0f172a' }}>markr</span></span>
         </Link>
 
         {/* Desktop Nav */}
@@ -68,6 +71,7 @@ export const Navbar: React.FC = () => {
             </AnimatePresence>
           </div>
           <Link to="/about" className="text-sm font-600 focus-ring rounded px-1 transition-colors hover:text-blue-600" style={{ color:'var(--color-muted)', fontWeight:600 }}>About</Link>
+          <Link to="/guides" className="text-sm font-600 focus-ring rounded px-1 transition-colors hover:text-blue-600" style={{ color:'var(--color-muted)', fontWeight:600 }}>Guides</Link>
           <Link to="/privacy" className="text-sm font-600 focus-ring rounded px-1 transition-colors hover:text-blue-600" style={{ color:'var(--color-muted)', fontWeight:600 }}>Privacy</Link>
           <Link to="/merge-pdf" className="btn-primary text-sm" style={{ padding:'9px 20px', fontSize:'0.85rem' }}>Get Started</Link>
         </nav>
@@ -97,6 +101,7 @@ export const Navbar: React.FC = () => {
                 </div>
               </div>
               <div className="flex gap-3 flex-wrap">
+                <Link to="/guides" onClick={() => setMobileOpen(false)} className="text-sm font-600" style={{ color:'var(--color-muted)' }}>Guides</Link>
                 <Link to="/about" onClick={() => setMobileOpen(false)} className="text-sm font-600" style={{ color:'var(--color-muted)' }}>About</Link>
                 <Link to="/privacy" onClick={() => setMobileOpen(false)} className="text-sm font-600" style={{ color:'var(--color-muted)' }}>Privacy</Link>
               </div>

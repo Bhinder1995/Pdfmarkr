@@ -36,7 +36,7 @@ export const WatermarkTool: React.FC = () => {
         fontSize,
         color,
       });
-      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `watermarked-${file.name}` });
+      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `pdfmarkr-watermarked-${file.name}` });
     } catch (e: any) { setError(e?.message || 'Watermarking failed. Please try another PDF.'); }
     finally { setProcessing(false); }
   };

@@ -1,0 +1,42 @@
+# PDFMarkr - 100% Free, Private, Browser-Based PDF Tools
+
+PDFMarkr is a high-performance web platform providing professional PDF utilities that run entirely inside the user's browser. No files are ever uploaded to a server, ensuring 100% privacy and security.
+
+## Core Values
+- **Privacy-First:** Zero server uploads. All processing happens in local RAM via WebAssembly and JavaScript.
+- **Always Free:** No accounts, no sign-ups, no daily limits.
+- **Fast:** Instant processing without network latency.
+
+## Available Tools
+
+### Organize
+- **Merge PDF:** Combine multiple PDFs into one document. (URL: /merge-pdf)
+- **Split PDF:** Extract pages or split documents by range. (URL: /split-pdf)
+- **Compress PDF:** Reduce file size without quality loss. (URL: /compress-pdf)
+- **Rotate PDF:** Fix orientation of PDF pages permanently. (URL: /rotate-pdf)
+
+### Convert
+- **PDF to Word:** Convert PDF to editable .docx files. (URL: /pdf-to-word)
+- **Word to PDF:** Transform Word documents into professional PDFs. (URL: /word-to-pdf)
+- **Extract Text:** Pull searchable text from any PDF. (URL: /extract-text)
+- **PDF to Images:** Export PDF pages as high-quality JPG/PNG. (URL: /pdf-to-images)
+
+### Advanced
+- **Metadata Editor:** Edit PDF title, author, and keywords. (URL: /metadata-editor)
+- **Watermark PDF:** Add custom text watermarks to any PDF. (URL: /watermark-pdf)
+
+## Documentation & Guides
+We provide step-by-step tutorials for mastering document management:
+- **Reduce PDF Size:** /guides/how-to-reduce-pdf-file-size-for-email
+- **Extract Pages:** /guides/how-to-extract-pages-from-pdf-on-mac
+- **Add Watermarks:** /guides/how-to-add-confidential-watermark-to-pdf
+- **Combine PDFs:** /guides/how-to-combine-multiple-pdfs-into-one-document
+- **Fix Orientation:** /guides/how-to-fix-sideways-pdf-scans-permanently
+- **PDF to Editable Word:** /guides/how-to-convert-pdf-to-editable-word-documents
+- **Save Word as PDF:** /guides/how-to-save-a-word-doc-as-pdf-without-microsoft-word
+- **Copy Protected Text:** /guides/how-to-copy-text-from-a-protected-pdf-document
+- **Edit PDF Metadata:** /guides/how-to-change-the-author-and-title-of-a-pdf
+- **PDF to Images Guide:** /guides/how-to-export-pdf-pages-as-high-quality-images
+
+## Technical Architecture
+Built with Vite, React, and Tailwind CSS. PDF processing is powered by `pdf-lib` and `pdfjs-dist`, running in-browser via Web Workers for maximum performance.

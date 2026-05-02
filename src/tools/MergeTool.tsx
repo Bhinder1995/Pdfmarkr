@@ -41,7 +41,7 @@ export const MergeTool: React.FC = () => {
     setProcessing(true); setError(null); setResult(null);
     try {
       const data = await PDFEngine.merge(files.map(f => ({ file: f })), insertBlank);
-      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: 'merged.pdf' });
+      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: 'pdfmarkr-merged.pdf' });
     } catch (e: any) {
       setError(e?.message || 'Merge failed. Please check your PDF files.');
     } finally { setProcessing(false); }

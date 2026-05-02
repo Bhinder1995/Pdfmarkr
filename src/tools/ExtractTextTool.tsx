@@ -34,7 +34,7 @@ export const ExtractTextTool: React.FC = () => {
 
   const downloadTxt = () => {
     if (!text || !file) return;
-    dlBlob(new Blob([text], { type: 'text/plain' }), `${file.name}.txt`);
+    dlBlob(new Blob([text], { type: 'text/plain' }), `pdfmarkr-extract-text-${file.name.replace(/\.pdf$/i, '')}.txt`);
   };
 
   const reset = () => { setFile(null); setText(null); setError(null); };

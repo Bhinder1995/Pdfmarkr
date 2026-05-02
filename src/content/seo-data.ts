@@ -1,15 +1,18 @@
 export interface FAQ { question: string; answer: string; }
+export interface HowToStep { name: string; text: string; }
+
 export interface ToolSEO {
   id: string; title: string; description: string; keywords: string[];
   content: string; faqs: FAQ[];
+  howTo?: HowToStep[];
   ogTitle?: string; ogDescription?: string;
 }
 
 export const SEO_CONTENT: Record<string, ToolSEO> = {
   merge: {
-    id:'merge', title:'Merge PDF Online — Combine PDFs Free | PDFMarkr',
-    description:'Merge multiple PDF files into one document instantly. 100% browser-based, no uploads, no server. Unlimited files, free forever.',
-    keywords:['merge pdf online free','combine pdf files','join pdf documents','pdf merger tool'],
+    id:'merge', title:'Merge PDF Files Online — No Upload Required | PDFMarkr',
+    description:'Combine multiple PDFs into one document instantly. Drag to reorder, unlimited files, 100% browser-based. No server uploads, no account. Works on any device.',
+    keywords:['merge PDF no upload', 'combine PDF files online', 'join multiple PDFs', 'PDF combiner browser', 'merge PDF unlimited files'],
     ogTitle:'Merge PDF Files Online for Free', ogDescription:'Combine unlimited PDFs into one file. Runs in your browser — no uploads, no waiting, completely private.',
     content:`<h2>The Fastest Way to Combine PDF Files Online</h2>
 <p>Merging PDFs is one of the most frequent document tasks professionals face every day. Whether you are compiling a report from multiple sources, bundling invoices for accounting, or assembling a portfolio, our <strong>Merge PDF tool</strong> handles it all — instantly and privately.</p>
@@ -22,7 +25,7 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
 <li><strong>Step 3:</strong> Click "Merge PDF" and download your combined document.</li>
 </ul>
 <h3>Who Uses This Tool?</h3>
-<p>Students merging thesis chapters, lawyers combining contracts, accountants bundling financial statements, and HR professionals compiling employee records — all use PDF merging as a core part of their workflow. PDFMarkr makes this process fast, private, and accessible from any device without installing software.</p>
+<p>Students merging thesis chapters, lawyers combining contracts, accountants bundling financial statements, and HR professionals compiling employee records — all use PDF merging as a core part of their workflow. If the resulting file is too large, you can easily use our <a href="/compress-pdf" style="color: var(--color-brand); text-decoration: underline;">Compress PDF tool</a> to shrink it down for email attachments. PDFMarkr makes this process fast, private, and accessible from any device without installing software.</p>
 <h3>Why Choose PDFMarkr?</h3>
 <p>Most free online PDF tools have hidden catches — file size limits, daily quotas, or mandatory account registration. PDFMarkr has none of these. We process everything locally, meaning we have no infrastructure costs for file processing, and we pass those savings directly to you as unlimited, free access.</p>`,
     faqs:[
@@ -30,12 +33,17 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
       {question:'Are my files safe?', answer:'Completely. Nothing is uploaded to any server. Processing happens inside your browser only.'},
       {question:'Can I reorder pages before merging?', answer:'Yes. You can reorder the files in the upload list before processing.'},
       {question:'Does it work on mobile?', answer:'Yes, PDFMarkr is fully responsive and works on iOS Safari, Android Chrome, and all modern mobile browsers.'},
+    ],
+    howTo: [
+      { name: "Upload your PDFs", text: "Click 'Select Files' or drag and drop multiple PDF files into the dropzone." },
+      { name: "Reorder Files", text: "Drag and drop the files in the list to arrange them in the correct order." },
+      { name: "Merge and Download", text: "Click the 'Merge PDF' button. Your combined file will be processed locally and downloaded instantly." }
     ]
   },
   split: {
-    id:'split', title:'Split PDF Online — Extract Pages Free | PDFMarkr',
-    description:'Split a PDF into individual pages or extract a custom page range. Browser-based, private, and completely free.',
-    keywords:['split pdf online','extract pages from pdf','pdf page extractor','split pdf for free'],
+    id:'split', title:'Split PDF Online — No Sign-Up, Instant Results | PDFMarkr',
+    description:'Split a PDF into individual pages or extract a custom page range in seconds. Private browser-based processing — no account, no uploads, completely instant.',
+    keywords:['split PDF no sign-up', 'extract PDF pages online', 'remove pages from PDF', 'PDF page splitter', 'split PDF by range free'],
     content:`<h2>Extract and Split PDF Pages with Precision</h2>
 <p>When you need specific pages from a large document, splitting a PDF is far more professional than forwarding the entire file. Our <strong>Split PDF tool</strong> lets you extract individual pages or define custom ranges like "1, 3-5, 8" with a single click.</p>
 <h3>Custom Range Splitting</h3>
@@ -47,6 +55,7 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
 <li>Separating scanned receipts stored in one multi-page PDF</li>
 <li>Creating individual handout sheets from a presentation PDF</li>
 </ul>
+<p>If you extract pages from different documents and want to put them together, simply hop over to our <a href="/merge-pdf" style="color: var(--color-brand); text-decoration: underline;">Merge PDF tool</a> to combine them into a single file.</p>
 <h3>Local Processing Advantage</h3>
 <p>Because the split happens entirely in your browser, there are no upload delays even for 100-page documents. The engine reads only the pages you request, making it highly efficient even on slower connections or older hardware.</p>`,
     faqs:[
@@ -54,12 +63,17 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
       {question:'What range format do you support?', answer:'Enter page numbers separated by commas. Use a hyphen for ranges. Example: 1, 3-5, 8'},
       {question:'Does quality change after splitting?', answer:'No. Pages are extracted from the original PDF without any re-encoding, preserving full quality.'},
       {question:'Can I split a password-protected PDF?', answer:'You need to unlock the PDF first. Once unlocked, our tool can split it normally.'},
+    ],
+    howTo: [
+      { name: "Upload your PDF", text: "Drag and drop a multi-page PDF into the tool." },
+      { name: "Select Page Range", text: "Enter specific pages to extract (e.g., '1, 3-5, 8') or leave blank to burst the PDF into individual pages." },
+      { name: "Extract Pages", text: "Click 'Extract Pages' to instantly create a new PDF containing only your selected pages." }
     ]
   },
   compress: {
-    id:'compress', title:'Compress PDF Online — Reduce PDF File Size Free | PDFMarkr',
-    description:'Shrink your PDF file size without sacrificing quality. Fast, private browser-based compression — no uploads required.',
-    keywords:['compress pdf online','reduce pdf size','pdf compressor free','shrink pdf file'],
+    id:'compress', title:'Compress PDF Online — Instant, No Upload | PDFMarkr',
+    description:'Reduce PDF file size without losing quality — instantly, in your browser. No waiting, no uploads, no account. Perfect for email attachments and fast sharing.',
+    keywords:['compress PDF instantly', 'reduce PDF size no upload', 'shrink PDF for email', 'PDF compressor instant', 'PDF file size reducer'],
     content:`<h2>Optimize Your PDF File Size Instantly</h2>
 <p>Large PDFs create problems: email clients reject them, upload forms refuse them, and sharing becomes slow. Our <strong>Compress PDF</strong> tool resolves this by intelligently restructuring the internal data of your PDF to eliminate waste without visually degrading the content.</p>
 <h3>How Compression Works</h3>
@@ -80,9 +94,9 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
     ]
   },
   'pdf-to-word': {
-    id:'pdf-to-word', title:'PDF to Word Converter Online — Free DOCX Export | PDFMarkr',
-    description:'Convert PDF to editable Word documents (.docx) directly in your browser. Accurate text extraction, private, and free.',
-    keywords:['pdf to word converter','pdf to docx online','convert pdf to word free','pdf to editable word'],
+    id:'pdf-to-word', title:'PDF to Word Converter — No Upload, Stays Private | PDFMarkr',
+    description:'Convert PDF to editable Word (.docx) files directly in your browser. Your document never touches a server. High accuracy, full privacy, no account needed.',
+    keywords:['PDF to Word no upload', 'convert PDF to DOCX private', 'PDF to Word browser', 'offline PDF Word converter', 'PDF to editable Word'],
     content:`<h2>Convert PDF to Editable Word Documents</h2>
 <p>PDFs are great for sharing but frustrating to edit. Our <strong>PDF to Word converter</strong> extracts the full text content of your PDF and reconstructs it as a properly formatted <code>.docx</code> file you can edit in Microsoft Word, Google Docs, or LibreOffice.</p>
 <h3>Accurate Text Reconstruction</h3>
@@ -104,9 +118,9 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
     ]
   },
   'word-to-pdf': {
-    id:'word-to-pdf', title:'Word to PDF Converter Online — DOCX to PDF Free | PDFMarkr',
-    description:'Convert Word documents (.doc, .docx) to professional PDF files instantly. Browser-based, no installation required.',
-    keywords:['word to pdf converter','docx to pdf online','convert word to pdf free','doc to pdf'],
+    id:'word-to-pdf', title:'Word to PDF — 100% Local Processing | PDFMarkr',
+    description:'Convert Word documents to professional PDFs with zero server contact. Processing happens entirely on your device — fast, private, and no sign-up required.',
+    keywords:['Word to PDF local', 'DOCX to PDF no upload', 'convert Word to PDF private', 'Word PDF converter no account', 'offline Word to PDF'],
     content:`<h2>Create Professional PDFs from Word Documents</h2>
 <p>PDF is the universal standard for sharing documents. Our <strong>Word to PDF tool</strong> converts your <code>.docx</code> or <code>.doc</code> files into properly formatted PDFs that look the same on every device — no Microsoft Word installation needed.</p>
 <h3>Why Convert to PDF?</h3>
@@ -123,9 +137,9 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
     ]
   },
   rotate: {
-    id:'rotate', title:'Rotate PDF Online — Fix PDF Orientation Free | PDFMarkr',
-    description:'Rotate PDF pages by 90°, 180°, or 270°. Fix sideways or upside-down scans permanently. Free and browser-based.',
-    keywords:['rotate pdf online','fix pdf orientation','rotate pdf pages permanently','pdf rotator free'],
+    id:'rotate', title:'Rotate PDF Pages Online — Instant Fix | PDFMarkr',
+    description:'Correct PDF page orientation permanently in seconds. Rotate one page or all — 90° or 180°. Instant browser-based fix, no software, no uploads, no sign-up.',
+    keywords:['rotate PDF pages instantly', 'fix PDF orientation online', 'rotate PDF 90 degrees', 'flip PDF pages no upload', 'PDF rotation tool instant'],
     content:`<h2>Fix PDF Page Orientation Permanently</h2>
 <p>Scanned documents often come out sideways or upside down. Our <strong>Rotate PDF tool</strong> lets you fix the orientation of individual pages or the entire document in seconds — and the change is permanent, not just a display preference.</p>
 <h3>Flexible Rotation Options</h3>
@@ -147,9 +161,9 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
     ]
   },
   'extract-text': {
-    id:'extract-text', title:'Extract Text from PDF Online — PDF to TXT Free | PDFMarkr',
-    description:'Extract all text from any PDF file and save as a clean .txt file. Preserves page structure. Browser-based and private.',
-    keywords:['extract text from pdf','pdf to text converter','pdf text extractor','copy text from pdf'],
+    id:'extract-text', title:'Extract Text from PDF — No Sign-Up | PDFMarkr',
+    description:'Pull all text from any PDF instantly. Copy to clipboard or download as .txt. Runs locally in your browser — no account, no uploads, nothing stored.',
+    keywords:['extract text from PDF no sign-up', 'PDF text extractor', 'copy text from PDF online', 'PDF to TXT no account', 'pull text from PDF browser'],
     content:`<h2>Extract Clean, Searchable Text from PDF Files</h2>
 <p>Copying text from a PDF manually is error-prone and breaks paragraph structure. Our <strong>Extract Text tool</strong> reads the internal text layer of your PDF and outputs a clean, well-structured <code>.txt</code> file — page by page, ready for analysis, editing, or import into other systems.</p>
 <h3>Structured Output</h3>
@@ -171,9 +185,9 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
     ]
   },
   metadata: {
-    id:'metadata', title:'PDF Metadata Editor — Edit PDF Title, Author & Keywords | PDFMarkr',
-    description:'View and edit hidden PDF metadata: title, author, subject, keywords, creator. Clean your PDF properties before sharing.',
-    keywords:['pdf metadata editor','edit pdf properties','change pdf author','pdf title editor','remove pdf metadata'],
+    id:'metadata', title:'Edit PDF Metadata — Private, 100% Local | PDFMarkr',
+    description:'Update PDF title, author, subject, and keywords privately in your browser. Nothing is sent to any server. Clean up document properties in seconds, no sign-up.',
+    keywords:['edit PDF metadata private', 'change PDF properties local', 'PDF title author editor', 'PDF metadata cleaner no upload', 'document properties editor'],
     content:`<h2>Full Control Over Your PDF Metadata</h2>
 <p>Every PDF file carries hidden information called <strong>metadata</strong> — including the document's title, author name, subject, keywords, and the application that created it. This information is invisible in most viewers but is read by search engines, file explorers, and document management systems.</p>
 <h3>Why Metadata Matters</h3>
@@ -190,9 +204,9 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
     ]
   },
   'pdf-to-images': {
-    id:'pdf-to-images', title:'Convert PDF to Images Online — PDF to JPG/PNG Free | PDFMarkr',
-    description:'Convert every page of a PDF document into high-quality PNG or JPEG images. Fast, local, browser-based extraction.',
-    keywords:['pdf to images','pdf to jpg','pdf to png','extract images from pdf'],
+    id:'pdf-to-images', title:'PDF to JPG / PNG — No Upload, High Quality | PDFMarkr',
+    description:'Export PDF pages as high-quality JPG or PNG images — no server uploads, no account. Fast local conversion with full control over output format and quality.',
+    keywords:['PDF to JPG no upload', 'PDF to PNG browser', 'convert PDF to image local', 'PDF page to image no sign-up', 'export PDF as image free'],
     content:`<h2>Convert PDF Pages into High-Quality Images</h2>
 <p>Sometimes you need to share a PDF in an environment that only accepts images — like a social media post, a presentation slide deck, or an email body. Our <strong>PDF to Images converter</strong> renders every page of your PDF into crisp, high-resolution PNG or JPEG files.</p>
 <h3>Lossless PNG or Compressed JPEG</h3>
@@ -209,9 +223,9 @@ export const SEO_CONTENT: Record<string, ToolSEO> = {
     ]
   },
   watermark: {
-    id:'watermark', title:'Add Watermark to PDF Online — Stamp PDF Free | PDFMarkr',
-    description:'Add text watermarks to your PDF documents. Customise text, opacity, size, and position. 100% private and free.',
-    keywords:['add watermark to pdf','watermark pdf online','stamp pdf','pdf watermark creator'],
+    id:'watermark', title:'Watermark PDF Online — No Sign-Up | PDFMarkr',
+    description:'Add custom text watermarks to any PDF — adjust opacity, angle, and position. No account, no uploads. Stamp Confidential, Draft, or any text privately in seconds.',
+    keywords:['watermark PDF no sign-up', 'add text watermark PDF online', 'stamp confidential on PDF', 'PDF watermark no account', 'custom watermark PDF browser'],
     content:`<h2>Secure Your Documents with Custom Watermarks</h2>
 <p>Whether you are distributing a confidential draft, stamping invoices as PAID, or protecting your intellectual property, our <strong>Watermark PDF tool</strong> makes it simple to apply professional text overlays across all pages of your document.</p>
 <h3>Full Customisation</h3>

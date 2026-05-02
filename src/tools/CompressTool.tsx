@@ -21,7 +21,7 @@ export const CompressTool: React.FC = () => {
     setProcessing(true); setError(null); setResult(null);
     try {
       const { data, savedKB } = await PDFEngine.compress(file, level);
-      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `compressed-${file.name}`, savedKB });
+      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `pdfmarkr-compressed-${file.name}`, savedKB });
     } catch (e: any) { setError(e?.message || 'Compression failed.'); } finally { setProcessing(false); }
   };
 

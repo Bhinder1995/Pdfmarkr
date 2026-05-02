@@ -25,11 +25,11 @@ export const SplitTool: React.FC = () => {
     try {
       if (mode === 'all') {
         const pages = await PDFEngine.split(file);
-        setResults(pages.map(p => ({ blob: new Blob([p.data], { type: 'application/pdf' }), name: p.name })));
+        setResults(pages.map(p => ({ blob: new Blob([p.data], { type: 'application/pdf' }), name: `pdfmarkr-split-${p.name}` })));
       } else {
         const rangeStr = mode === 'range' ? range : mode;
         const data = await PDFEngine.extractRange(file, rangeStr);
-        setResults([{ blob: new Blob([data], { type: 'application/pdf' }), name: `${mode}-pages-${file.name}` }]);
+        setResults([{ blob: new Blob([data], { type: 'application/pdf' }), name: `pdfmarkr-split-${mode}-pages-${file.name}` }]);
       }
     } catch (e: any) { setError(e?.message || 'Split failed.'); } finally { setProcessing(false); }
   };

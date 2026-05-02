@@ -48,7 +48,7 @@ export const MetadataTool: React.FC = () => {
     setProcessing(true); setError(null); setResult(null);
     try {
       const data = await PDFEngine.editMetadata(file, meta);
-      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `edited-${file.name}` });
+      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `pdfmarkr-metadata-${file.name}` });
     } catch (e: any) { setError(e?.message || 'Metadata update failed.'); } finally { setProcessing(false); }
   };
 

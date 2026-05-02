@@ -20,7 +20,7 @@ export const WordToPdfTool: React.FC = () => {
     setProcessing(true); setError(null); setResult(null);
     try {
       const data = await PDFEngine.wordToPdf(file, watermark || undefined);
-      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `${file.name.replace(/\.(doc|docx)$/i, '')}.pdf` });
+      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `pdfmarkr-word-to-pdf-${file.name.replace(/\.(doc|docx)$/i, '')}.pdf` });
     } catch (e: any) { setError(e?.message || 'Conversion failed.'); } finally { setProcessing(false); }
   };
 

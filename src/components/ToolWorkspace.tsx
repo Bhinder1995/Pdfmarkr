@@ -1,11 +1,13 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, X, Shield, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, X, Shield, Loader2, BookOpen } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { SEO_CONTENT } from '../content/seo-data';
 import { FaqAccordion } from './FaqAccordion';
 import { TOOLS } from './Navbar';
+import { Logo } from './Logo';
+import { GUIDES } from '../content/guides-data';
 
 // Lazy-load each tool — only the tool the user visits gets downloaded
 const MergeTool      = lazy(() => import('../tools/MergeTool').then(m => ({ default: m.MergeTool })));
@@ -58,12 +60,33 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
   const navigate = useNavigate();
 
   const seo  = SEO_CONTENT[type];
-  const tool = TOOLS.find(t => t.id === type)!;
-  const related = tool ? TOOLS.filter(t => t.id !== type).slice(0, 3) : [];
+  const tool = TOOLS.find(t => t.id === type);
+  const related = TOOLS.filter(t => t.id !== type).slice(0, 5);
+  const toolGuide = GUIDES.find(g => g.toolId === type);
+
+  if (!tool) return null;
 
   const faqSchema = seo?.faqs ? {
     "@context":"https://schema.org","@type":"FAQPage",
     "mainEntity": seo.faqs.map(f => ({ "@type":"Question", "name":f.question, "acceptedAnswer":{ "@type":"Answer","text":f.answer } }))
+  } : null;
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org", "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://pdfmarkr.com/" },
+      { "@type": "ListItem", "position": 2, "name": tool?.name, "item": `https://pdfmarkr.com${tool?.path}` }
+    ]
+  };
+
+  const howToSchema = seo?.howTo ? {
+    "@context": "https://schema.org", "@type": "HowTo",
+    "name": `How to use ${tool?.name}`,
+    "description": seo.description,
+    "step": seo.howTo.map((s, i) => ({
+      "@type": "HowToStep", "name": s.name, "text": s.text,
+      "url": `https://pdfmarkr.com${tool?.path}#step-${i+1}`
+    }))
   } : null;
 
 
@@ -78,7 +101,10 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
         <meta property="og:description" content={seo?.ogDescription || seo?.description} />
         <meta property="og:url" content={`https://pdfmarkr.com${tool?.path || ''}`} />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content={`https://pdfmarkr.com/og/${type}.png`} />
         {faqSchema && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
+        {breadcrumbSchema && <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>}
+        {howToSchema && <script type="application/ld+json">{JSON.stringify(howToSchema)}</script>}
         <script type="application/ld+json">{JSON.stringify({ "@context":"https://schema.org","@type":"SoftwareApplication","name":tool?.name,"applicationCategory":"UtilitiesApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"operatingSystem":"Web Browser" })}</script>
       </Helmet>
 
@@ -93,8 +119,10 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
         >
           <div className="flex items-center justify-between mb-8">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ background:'linear-gradient(135deg,#3b82f6,#6366f1)' }}>P</div>
-              <span className="font-bold" style={{ color:'var(--color-text)' }}>pdfmarkr</span>
+              <div className="w-8 h-8 flex items-center justify-center">
+                <Logo />
+              </div>
+              <span className="font-bold text-lg tracking-tight" style={{ color: '#e11d48' }}>pdf<span style={{ color: '#0f172a' }}>markr</span></span>
             </Link>
             <button className="lg:hidden p-1.5 rounded-lg hover:bg-slate-100" onClick={() => setSidebar(false)}><X size={16} /></button>
           </div>
@@ -120,7 +148,10 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
         {/* Mobile Header */}
         <div className="lg:hidden flex items-center justify-between px-4 py-3" style={{ borderBottom:'1px solid var(--color-border)', background:'var(--color-surface)' }}>
           <button onClick={() => setSidebar(true)} className="p-2 rounded-xl hover:bg-slate-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-          <span className="font-bold text-sm" style={{ color:'var(--color-text)' }}>{tool?.name}</span>
+          <div className="flex flex-col items-center">
+            <span className="font-bold text-sm" style={{ color:'var(--color-text)' }}>{tool?.name}</span>
+            {toolGuide && <Link to={`/guides/${toolGuide.slug}`} className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" style={{ color:'var(--color-brand)' }}><BookOpen size={10} /> Read Guide</Link>}
+          </div>
           <button onClick={() => navigate('/')} className="p-2 rounded-xl hover:bg-slate-100"><ArrowLeft size={18} /></button>
         </div>
 
@@ -134,14 +165,21 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
 
           {/* Tool Header */}
           <div className="mb-8">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{ background:'linear-gradient(135deg,#3b82f6,#6366f1)' }}>
-                {tool && <tool.icon size={24} />}
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{ background:'linear-gradient(135deg,#3b82f6,#6366f1)' }}>
+                  {tool && <tool.icon size={24} />}
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold" style={{ color:'var(--color-text)' }}>{tool?.name}</h1>
+                  <p className="text-sm" style={{ color:'var(--color-muted)' }}>{seo?.description?.split('.')[0]}.</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold" style={{ color:'var(--color-text)' }}>{tool?.name}</h1>
-                <p className="text-sm" style={{ color:'var(--color-muted)' }}>{seo?.description?.split('.')[0]}.</p>
-              </div>
+              {toolGuide && (
+                <Link to={`/guides/${toolGuide.slug}`} className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all hover:bg-blue-50 border border-slate-200" style={{ color: 'var(--color-brand)' }}>
+                  <BookOpen size={16} /> How to Use
+                </Link>
+              )}
             </div>
             <div className="flex flex-wrap gap-2">
               {[{icon:'🔒',label:'100% Private'},{icon:'⚡',label:'Instant'},{icon:'∞',label:'Free Forever'}].map(b => (
@@ -173,7 +211,7 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
                     ))}
                 </div>
                 {/* Related tools */}
-                <div className="p-6 rounded-2xl" style={{ background:'var(--color-surface)', border:'1.5px solid var(--color-border)' }}>
+                <div className="p-6 rounded-2xl mb-6" style={{ background:'var(--color-surface)', border:'1.5px solid var(--color-border)' }}>
                   <p className="mono-label mb-4">Related Tools</p>
                   <div className="space-y-2">
                     {related.map(t => (
@@ -184,17 +222,57 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
                     ))}
                   </div>
                 </div>
+                
+                {/* Related Guides */}
+                {GUIDES.filter(g => g.toolId === type).length > 0 && (
+                  <div className="p-6 rounded-2xl" style={{ background:'var(--color-surface)', border:'1.5px solid var(--color-border)' }}>
+                    <p className="mono-label mb-4">Helpful Guides</p>
+                    <div className="space-y-3">
+                      {GUIDES.filter(g => g.toolId === type).map(g => (
+                        <Link key={g.slug} to={`/guides/${g.slug}`} className="block group">
+                          <p className="text-sm font-semibold mb-1 group-hover:text-blue-600 transition-colors" style={{ color: 'var(--color-text)' }}>{g.title}</p>
+                          <p className="text-xs line-clamp-2" style={{ color: 'var(--color-muted)' }}>{g.description}</p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </aside>
             </div>
           )}
 
           {/* FAQ */}
-          {seo?.faqs?.length > 0 && (
+          {seo?.faqs && seo.faqs.length > 0 && (
             <section className="mb-16">
               <h2 className="text-2xl font-bold mb-6" style={{ color:'var(--color-text)' }}>Frequently Asked Questions</h2>
               <FaqAccordion faqs={seo.faqs} />
             </section>
           )}
+
+          {/* Strong Interlinking Section */}
+          <section className="pt-12 mb-16" style={{ borderTop: '1px solid var(--color-border)' }}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+              <div>
+                <h2 className="text-2xl font-bold" style={{ color:'var(--color-text)' }}>Explore More Professional PDF Tools</h2>
+                <p className="text-sm" style={{ color: 'var(--color-muted)' }}>Powerful, private, and 100% free browser-based utilities.</p>
+              </div>
+              <Link to="/" className="text-sm font-bold flex items-center gap-2 hover:text-blue-600" style={{ color: 'var(--color-brand)' }}>
+                View All Tools <ArrowRight size={16} />
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {TOOLS.filter(t => t.id !== type).slice(0, 8).map(t => (
+                <Link key={t.id} to={t.path} className="p-4 rounded-2xl transition-all hover:-translate-y-1 hover:shadow-lg bg-white border border-slate-200 group">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-colors group-hover:bg-blue-50" style={{ background: 'var(--color-brand-light)' }}>
+                    <t.icon size={20} color="var(--color-brand)" />
+                  </div>
+                  <p className="font-bold text-sm mb-1" style={{ color: 'var(--color-text)' }}>{t.name}</p>
+                  <p className="text-xs line-clamp-1" style={{ color: 'var(--color-muted)' }}>{t.description}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
         </main>
       </div>
     </div>

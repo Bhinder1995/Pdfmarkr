@@ -20,7 +20,7 @@ export const PdfToWordTool: React.FC = () => {
     setProcessing(true); setError(null); setResult(null);
     try {
       const blob = await PDFEngine.pdfToWord(file);
-      setResult({ blob, name: `${file.name.replace(/\.pdf$/i, '')}.docx` });
+      setResult({ blob, name: `pdfmarkr-pdf-to-word-${file.name.replace(/\.pdf$/i, '')}.docx` });
     } catch (e: any) { setError(e?.message || 'Conversion failed.'); } finally { setProcessing(false); }
   };
 

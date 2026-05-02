@@ -4,7 +4,15 @@ import { Helmet } from 'react-helmet-async';
 import { motion } from 'motion/react';
 import { Search, ArrowRight, Shield, Zap, Globe, Lock, FileStack, Scissors, Minimize2, FileText, FileOutput, RotateCw, Type, Tally4 } from 'lucide-react';
 import { Navbar, TOOLS } from './components/Navbar';
+import { Logo } from './components/Logo';
 import { ToolWorkspace } from './components/ToolWorkspace';
+import { GuideLayout } from './components/GuideLayout';
+import { GUIDES } from './content/guides-data';
+import { AboutPage } from './pages/AboutPage';
+import { PrivacyPage } from './pages/PrivacyPage';
+import { TermsPage } from './pages/TermsPage';
+import { GuidesPage } from './pages/GuidesPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { cn } from './lib/utils';
 
 /* ── ScrollToTop ─────────────────────────────────────────────── */
@@ -18,14 +26,16 @@ const ScrollToTop = () => {
 const Footer = () => (
   <footer style={{ background: '#0f172a', borderTop: '1px solid #1e293b' }}>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-        <div className="col-span-2 md:col-span-1">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+        <div className="col-span-2 lg:col-span-2">
           <Link to="/" className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ background: 'linear-gradient(135deg,#3b82f6,#6366f1)' }}>P</div>
-            <span className="font-bold text-white text-xl" style={{ letterSpacing: '-0.02em' }}>pdf<span style={{ color: '#60a5fa' }}>markr</span></span>
+            <div className="w-8 h-8 flex items-center justify-center">
+              <Logo />
+            </div>
+            <span className="font-bold text-xl" style={{ color: '#e11d48', letterSpacing: '-0.02em' }}>pdf<span style={{ color: 'white' }}>markr</span></span>
           </Link>
           <p className="text-sm leading-relaxed" style={{ color: '#64748b' }}>
-            Professional PDF tools that run entirely in your browser. No uploads. No servers. Just fast, private, free processing.
+            Edit, convert, share, done. Professional PDF tools that run entirely in your browser. No uploads. No servers. Just fast, private, free processing.
           </p>
           <div className="mt-4 flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
@@ -48,6 +58,14 @@ const Footer = () => (
             ))}
             {TOOLS.filter(t => t.cat === 'advanced').map(t => (
               <li key={t.id}><Link to={t.path} className="text-sm transition-colors hover:text-white" style={{ color: '#64748b' }}>{t.name}</Link></li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#475569', letterSpacing: '0.15em' }}>Resources</p>
+          <ul className="space-y-2">
+            {GUIDES.map(g => (
+              <li key={g.slug}><Link to={`/guides/${g.slug}`} className="text-sm transition-colors hover:text-white" style={{ color: '#64748b' }}>{g.title.split(' ').slice(0, 5).join(' ')}...</Link></li>
             ))}
           </ul>
         </div>
@@ -97,7 +115,7 @@ const HomePage = () => {
     <>
       <Helmet>
         <title>PDFMarkr — Free Online PDF Tools | Merge, Split, Compress, Convert</title>
-        <meta name="description" content="8 professional PDF tools running 100% in your browser. Merge, split, compress, rotate, convert PDF to Word and more. No uploads, no servers, completely private and free." />
+        <meta name="description" content="Edit, convert, share, done. Professional PDF tools running 100% in your browser. Merge, split, compress, rotate, convert PDF to Word and more. No uploads, no servers, completely private and free." />
         <link rel="canonical" href="https://pdfmarkr.com/" />
       </Helmet>
 
@@ -112,13 +130,12 @@ const HomePage = () => {
             </div>
 
             <h1 className="font-bold leading-tight mb-6" style={{ fontSize: 'clamp(2.2rem,5vw,3.75rem)', color: 'var(--color-text)', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
-              Professional PDF tools<br />
-              <span className="gradient-text">for the privacy era.</span>
+              Edit, convert, share,<br />
+              <span className="gradient-text">done.</span>
             </h1>
 
             <p className="text-lg leading-relaxed mb-10 max-w-2xl mx-auto" style={{ color: 'var(--color-muted)' }}>
-              Merge, split, compress, rotate, and convert PDF files directly in your browser.
-              No accounts. No uploads. No limits. Works on any device.
+              Professional PDF tools for the privacy era. Merge, split, compress, rotate, and convert files directly in your browser. No accounts. No uploads. Works on any device.
             </p>
 
             {/* Search */}
@@ -130,6 +147,22 @@ const HomePage = () => {
                 className="w-full rounded-2xl py-4 pl-12 pr-5 text-base focus-ring"
                 style={{ background: 'var(--color-surface)', border: '1.5px solid var(--color-border)', color: 'var(--color-text)', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}
               />
+            </div>
+            
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-6 mt-4">
+              <div className="flex -space-x-2">
+                {[1,2,3,4,5].map(i => (
+                  <div key={i} className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs" style={{ background: 'var(--color-brand-light)', color: 'var(--color-brand)', fontWeight: 'bold' }}>
+                    {String.fromCharCode(64 + i)}
+                  </div>
+                ))}
+              </div>
+              <div className="text-left flex flex-col items-center sm:items-start">
+                <div className="flex gap-1 text-yellow-400 mb-0.5">
+                  {[1,2,3,4,5].map(i => <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>)}
+                </div>
+                <p className="text-xs font-medium" style={{ color: 'var(--color-muted)' }}>Trusted by professionals worldwide</p>
+              </div>
             </div>
 
             {/* CTA row */}
@@ -230,68 +263,7 @@ const HomePage = () => {
   );
 };
 
-/* ── Static pages ────────────────────────────────────────────── */
-const AboutPage = () => (
-  <>
-    <Helmet>
-      <title>About PDFMarkr — Privacy-First PDF Tools</title>
-      <meta name="description" content="PDFMarkr provides free, browser-based PDF tools that process files locally. No uploads, no servers, complete privacy by design." />
-    </Helmet>
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-20">
-      <h1 className="text-4xl font-bold mb-6" style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}>About PDFMarkr</h1>
-      <div className="prose-seo">
-        <p>PDFMarkr was built on a simple premise: your documents are your business. You shouldn't have to upload sensitive files to a stranger's server just to merge a PDF.</p>
-        <h2>How We're Different</h2>
-        <p>Every PDF tool on PDFMarkr runs entirely inside your web browser using WebAssembly-powered engines — <strong>pdf-lib</strong> for document manipulation and <strong>PDF.js</strong> for rendering. Your files load into browser RAM, are processed, and are returned to you — without ever touching our infrastructure.</p>
-        <h2>Our Commitment</h2>
-        <p>We commit to keeping all core tools free, ad-light, and available without registration. Privacy is not a feature here — it's the architecture.</p>
-      </div>
-    </main>
-  </>
-);
 
-const PrivacyPage = () => (
-  <>
-    <Helmet>
-      <title>Privacy Policy | PDFMarkr</title>
-      <meta name="description" content="PDFMarkr's privacy policy. We collect no file data. All processing is done locally in your browser." />
-    </Helmet>
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-20">
-      <h1 className="text-4xl font-bold mb-6" style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}>Privacy Policy</h1>
-      <div className="prose-seo">
-        <p><strong>Last updated:</strong> May 2026</p>
-        <h2>Files & Data</h2>
-        <p>PDFMarkr does <strong>not</strong> collect, store, transmit, or process any files you use with our tools. All PDF operations are performed locally using your device's processing power. No file content ever leaves your browser.</p>
-        <h2>Analytics</h2>
-        <p>We may use privacy-respecting analytics (without personal data or fingerprinting) to understand which tools are most used. No cookies are used for tracking or advertising.</p>
-        <h2>Third Parties</h2>
-        <p>We use CDN-hosted open-source libraries (pdf-lib, PDF.js). These are static asset loads; no user data is shared with these providers.</p>
-        <h2>Contact</h2>
-        <p>Questions about privacy? Email us at <strong>privacy@pdfmarkr.com</strong></p>
-      </div>
-    </main>
-  </>
-);
-
-const TermsPage = () => (
-  <>
-    <Helmet>
-      <title>Terms of Service | PDFMarkr</title>
-      <meta name="description" content="PDFMarkr terms of service. Free to use for personal and commercial purposes." />
-    </Helmet>
-    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-20">
-      <h1 className="text-4xl font-bold mb-6" style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}>Terms of Service</h1>
-      <div className="prose-seo">
-        <h2>Usage</h2>
-        <p>PDFMarkr's tools are free for personal and commercial use. You may use them without registration or payment.</p>
-        <h2>No Warranty</h2>
-        <p>Tools are provided "as is". While we strive for accuracy, we make no warranty that processing results are error-free for all documents.</p>
-        <h2>Your Responsibility</h2>
-        <p>You are responsible for the content of documents you process. Do not use PDFMarkr to infringe copyright or distribute unlawful content.</p>
-      </div>
-    </main>
-  </>
-);
 
 /* ── App ─────────────────────────────────────────────────────── */
 export default function App() {
@@ -305,6 +277,8 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
+          <Route path="/guides" element={<GuidesPage />} />
+          <Route path="/guides/:slug" element={<GuideLayout />} />
           <Route path="/merge-pdf"       element={<ToolWorkspace type="merge" />} />
           <Route path="/split-pdf"       element={<ToolWorkspace type="split" />} />
           <Route path="/compress-pdf"    element={<ToolWorkspace type="compress" />} />
@@ -315,6 +289,7 @@ export default function App() {
           <Route path="/metadata-editor" element={<ToolWorkspace type="metadata" />} />
           <Route path="/pdf-to-images"   element={<ToolWorkspace type="pdf-to-images" />} />
           <Route path="/watermark-pdf"   element={<ToolWorkspace type="watermark" />} />
+          <Route path="*"                element={<NotFoundPage />} />
         </Routes>
       </div>
       <Footer />

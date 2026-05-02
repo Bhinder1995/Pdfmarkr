@@ -29,7 +29,11 @@ export const PdfToImagesTool: React.FC = () => {
     setProcessing(true); setError(null); setResults([]); setProgress(0);
     try {
       const images = await PDFEngine.pdfToImages(file, format, QUALITY_SCALE[quality], (p) => setProgress(p));
-      setResults(images);
+      const renamedImages = images.map(img => ({
+        ...img,
+        name: `pdfmarkr-image-${file.name.replace(/\.pdf$/i, '')}-page${img.pageNum}.${format}`
+      }));
+      setResults(renamedImages);
     } catch (e: any) { setError(e?.message || 'Conversion failed. Please try another PDF.'); }
     finally { setProcessing(false); }
   };

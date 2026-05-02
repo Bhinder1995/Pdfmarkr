@@ -22,7 +22,7 @@ export const RotateTool: React.FC = () => {
     setProcessing(true); setError(null); setResult(null);
     try {
       const data = await PDFEngine.rotate(file, angle, target);
-      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `rotated-${file.name}` });
+      setResult({ blob: new Blob([data], { type: 'application/pdf' }), name: `pdfmarkr-rotated-${file.name}` });
     } catch (e: any) { setError(e?.message || 'Rotation failed.'); } finally { setProcessing(false); }
   };
 
