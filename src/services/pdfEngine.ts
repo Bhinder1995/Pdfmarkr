@@ -197,8 +197,7 @@ export const PDFEngine = {
         : new Paragraph({ children: [new TextRun({ text: line, size: 22 })] })
     );
     const doc = new Document({ sections: [{ properties: {}, children }] });
-    const buf = await Packer.toBuffer(doc);
-    return new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    return await Packer.toBlob(doc);
   },
 
   /** Word (.docx) → PDF using mammoth text extraction + pdf-lib layout */
