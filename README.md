@@ -1,6 +1,7 @@
 # 📄 PDFMarkr
 
-> **8 professional PDF tools that run 100% in your browser. No uploads. No servers. No limits. Completely free.**
+> **Edit, convert, share. Done.**
+> 10+ professional PDF tools that run 100% in your browser. No uploads. No servers. No limits. Completely free.
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![React](https://img.shields.io/badge/React-19-61dafb?logo=react)](https://react.dev)
@@ -25,7 +26,8 @@
 
 **Why PDFMarkr is different:**
 - 🔒 **Zero uploads** — files are loaded into browser RAM, never sent to any server
-- ⚡ **Instant** — no server round-trips; WebAssembly-powered pdf-lib & PDF.js do the work
+- 🚀 **One-Time Upload** — upload once and use across all tools (Merge → Compress → Watermark without re-uploading)
+- ⚡ **Instant** — no server round-trips; WebAssembly-powered engines do the work
 - ♾️ **Free forever** — no account, no subscription, no credits, no file size limits
 - 🌐 **Cross-platform** — works on any modern browser on desktop, tablet, and mobile
 

@@ -32,11 +32,14 @@ export const Navbar: React.FC = () => {
     <header className="glass sticky top-0 z-50" style={{ borderBottom: '1px solid var(--color-border)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 focus-ring rounded-lg">
-          <div className="w-10 h-10 flex items-center justify-center">
+        <Link to="/" className="flex items-center gap-3 focus-ring rounded-lg group">
+          <div className="w-10 h-10 flex items-center justify-center shrink-0">
             <Logo />
           </div>
-          <span className="font-bold text-2xl tracking-tight" style={{ color: '#e11d48' }}>pdf<span style={{ color: '#0f172a' }}>markr</span></span>
+          <div className="flex flex-col -space-y-1">
+            <span className="font-bold text-2xl tracking-tight leading-none" style={{ color: '#e11d48' }}>pdf<span style={{ color: '#0f172a' }}>markr</span></span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.1em] opacity-60" style={{ color: '#0f172a' }}>Edit, convert, share. Done.</span>
+          </div>
         </Link>
 
         {/* Desktop Nav */}
