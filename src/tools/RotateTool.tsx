@@ -4,18 +4,22 @@ import { X, Loader2, Zap, CheckCircle2, Download, Shield } from 'lucide-react';
 import { DropZone } from '../components/DropZone';
 import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
+import { useFiles } from '../context/FileContext';
 
 const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
 
 export const RotateTool: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const { files, addFiles, removeFile, clearFiles } = useFiles();
+  const [activeFileIndex, setActiveFileIndex] = useState(0);
+  const file = files[activeFileIndex] || null;
+
   const [angle, setAngle] = useState<90 | 180 | 270>(90);
   const [target, setTarget] = useState<'all' | 'odd' | 'even'>('all');
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<{ blob: Blob; name: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const onFiles = (files: File[]) => { setFile(files[0]); setResult(null); setError(null); };
+  const onFiles = (incoming: File[]) => { addFiles(incoming); setResult(null); setError(null); };
 
   const process = async () => {
     if (!file) return;
@@ -26,7 +30,7 @@ export const RotateTool: React.FC = () => {
     } catch (e: any) { setError(e?.message || 'Rotation failed.'); } finally { setProcessing(false); }
   };
 
-  const reset = () => { setFile(null); setResult(null); setError(null); };
+  const reset = () => { clearFiles(); setResult(null); setError(null); };
 
   const previewRotation = target !== 'even' ? angle : 0;
 
@@ -55,22 +59,29 @@ export const RotateTool: React.FC = () => {
   return (
     <div className="space-y-6">
       {!file ? (
-        <DropZone onFiles={onFiles} multiple={false} accept=".pdf" label="Drop your PDF here to rotate" />
+        <DropZone onFiles={onFiles} multiple={true} accept=".pdf" label="Drop your PDF here to rotate" />
       ) : (
         <>
           {/* Preview with live rotation */}
-          <div className="flex items-start gap-6 p-4 rounded-2xl" style={{ background: 'var(--color-surface-2)', border: '1.5px solid var(--color-border)' }}>
-            <div className="flex flex-col items-center gap-2">
-              <p className="text-xs font-semibold" style={{ color: 'var(--color-muted)' }}>Preview</p>
-              <div className="rounded-xl overflow-hidden" style={{ width: 80, aspectRatio: '3/4', border: '1px solid var(--color-border)', transform: `rotate(${previewRotation}deg)`, transition: 'transform 0.3s ease' }}>
-                <PdfCanvas file={file} scale={0.4} className="w-full h-full object-cover" />
-              </div>
+          <div className="flex items-center gap-4 p-4 rounded-2xl" style={{ background: 'var(--color-surface-2)', border: '1.5px solid var(--color-border)' }}>
+            <div className="rounded-xl overflow-hidden shrink-0" style={{ width: 64, aspectRatio: '3/4', border: '1px solid var(--color-border)', transform: `rotate(${previewRotation}deg)`, transition: 'transform 0.3s ease' }}>
+              <PdfCanvas file={file} scale={0.3} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-bold truncate" style={{ color: 'var(--color-text)' }}>{file.name}</p>
               <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>{(file.size / 1024).toFixed(1)} KB</p>
-              <button onClick={() => setFile(null)} className="mt-3 text-xs font-semibold text-red-500 hover:text-red-700 transition-colors">Remove file</button>
+              {files.length > 1 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {files.map((f, idx) => (
+                    <button key={idx} onClick={() => setActiveFileIndex(idx)} 
+                      className={`text-[10px] px-2 py-0.5 rounded-full border transition-all ${idx === activeFileIndex ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200'}`}>
+                      File {idx + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+            <button onClick={() => removeFile(activeFileIndex)} className="p-2 rounded-xl hover:bg-red-50 transition-colors"><X size={16} color="#ef4444" /></button>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">

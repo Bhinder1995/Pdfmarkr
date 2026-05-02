@@ -4,6 +4,7 @@ import { X, Loader2, Zap, CheckCircle2, Download, Shield, Image } from 'lucide-r
 import { DropZone } from '../components/DropZone';
 import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
+import { useFiles } from '../context/FileContext';
 
 const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
 
@@ -14,7 +15,10 @@ const QUALITY_SCALE: Record<ImgQuality, number> = { high: 2.5, medium: 1.5, low:
 const QUALITY_LABELS: Record<ImgQuality, string> = { high: 'High (2x)', medium: 'Medium (1.5x)', low: 'Screen (1x)' };
 
 export const PdfToImagesTool: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const { files, addFiles, removeFile, clearFiles } = useFiles();
+  const [activeFileIndex, setActiveFileIndex] = useState(0);
+  const file = files[activeFileIndex] || null;
+
   const [format, setFormat] = useState<ImgFormat>('png');
   const [quality, setQuality] = useState<ImgQuality>('high');
   const [processing, setProcessing] = useState(false);
@@ -22,7 +26,7 @@ export const PdfToImagesTool: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const onFiles = (files: File[]) => { setFile(files[0]); setResults([]); setError(null); setProgress(0); };
+  const onFiles = (incoming: File[]) => { addFiles(incoming); setResults([]); setError(null); setProgress(0); };
 
   const process = async () => {
     if (!file) return;
@@ -38,7 +42,7 @@ export const PdfToImagesTool: React.FC = () => {
     finally { setProcessing(false); }
   };
 
-  const reset = () => { setFile(null); setResults([]); setError(null); setProgress(0); };
+  const reset = () => { clearFiles(); setResults([]); setError(null); setProgress(0); };
   const downloadAll = () => results.forEach(r => dlBlob(r.blob, r.name));
 
   if (results.length > 0) return (
@@ -94,8 +98,18 @@ export const PdfToImagesTool: React.FC = () => {
             <div className="flex-1 min-w-0">
               <p className="font-bold truncate" style={{ color: 'var(--color-text)' }}>{file.name}</p>
               <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>{(file.size / 1024).toFixed(1)} KB</p>
+              {files.length > 1 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {files.map((f, idx) => (
+                    <button key={idx} onClick={() => setActiveFileIndex(idx)} 
+                      className={`text-[10px] px-2 py-0.5 rounded-full border transition-all ${idx === activeFileIndex ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200'}`}>
+                      File {idx + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <button onClick={() => setFile(null)} className="p-2 rounded-xl hover:bg-red-50 transition-colors"><X size={16} color="#ef4444" /></button>
+            <button onClick={() => removeFile(activeFileIndex)} className="p-2 rounded-xl hover:bg-red-50 transition-colors"><X size={16} color="#ef4444" /></button>
           </div>
 
           {/* Options */}

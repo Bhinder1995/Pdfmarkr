@@ -4,6 +4,7 @@ import { X, Loader2, Zap, CheckCircle2, Download, Shield, Stamp } from 'lucide-r
 import { DropZone } from '../components/DropZone';
 import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
+import { useFiles } from '../context/FileContext';
 
 const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
 
@@ -13,7 +14,10 @@ type WatermarkOpacity = 'light' | 'medium' | 'dark';
 const OPACITY_MAP: Record<WatermarkOpacity, number> = { light: 0.08, medium: 0.18, dark: 0.35 };
 
 export const WatermarkTool: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const { files, addFiles, removeFile, clearFiles } = useFiles();
+  const [activeFileIndex, setActiveFileIndex] = useState(0);
+  const file = files[activeFileIndex] || null;
+
   const [text, setText] = useState('CONFIDENTIAL');
   const [position, setPosition] = useState<WatermarkPos>('diagonal');
   const [opacity, setOpacity] = useState<WatermarkOpacity>('medium');
@@ -23,7 +27,7 @@ export const WatermarkTool: React.FC = () => {
   const [result, setResult] = useState<{ blob: Blob; name: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const onFiles = (files: File[]) => { setFile(files[0]); setResult(null); setError(null); };
+  const onFiles = (incoming: File[]) => { addFiles(incoming); setResult(null); setError(null); };
 
   const process = async () => {
     if (!file || !text.trim()) return;
@@ -41,7 +45,7 @@ export const WatermarkTool: React.FC = () => {
     finally { setProcessing(false); }
   };
 
-  const reset = () => { setFile(null); setResult(null); setError(null); };
+  const reset = () => { clearFiles(); setResult(null); setError(null); };
 
   const PRESETS = ['CONFIDENTIAL', 'DRAFT', 'DO NOT COPY', 'SAMPLE', 'INTERNAL USE'];
 
@@ -81,8 +85,18 @@ export const WatermarkTool: React.FC = () => {
             <div className="flex-1 min-w-0">
               <p className="font-bold truncate" style={{ color: 'var(--color-text)' }}>{file.name}</p>
               <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>{(file.size / 1024).toFixed(1)} KB</p>
+              {files.length > 1 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {files.map((f, idx) => (
+                    <button key={idx} onClick={() => setActiveFileIndex(idx)} 
+                      className={`text-[10px] px-2 py-0.5 rounded-full border transition-all ${idx === activeFileIndex ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200'}`}>
+                      File {idx + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <button onClick={() => setFile(null)} className="p-2 rounded-xl hover:bg-red-50 transition-colors"><X size={16} color="#ef4444" /></button>
+            <button onClick={() => removeFile(activeFileIndex)} className="p-2 rounded-xl hover:bg-red-50 transition-colors"><X size={16} color="#ef4444" /></button>
           </div>
 
           {/* Watermark text */}

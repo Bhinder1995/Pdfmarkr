@@ -4,6 +4,7 @@ import { X, Loader2, Zap, CheckCircle2, Download, Shield, Eye } from 'lucide-rea
 import { DropZone } from '../components/DropZone';
 import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
+import { useFiles } from '../context/FileContext';
 
 const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
 
@@ -18,7 +19,9 @@ const FIELDS: { key: keyof MetaFields; label: string; placeholder: string }[] = 
 ];
 
 export const MetadataTool: React.FC = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const { files, addFiles, removeFile, clearFiles } = useFiles();
+  const [activeFileIndex, setActiveFileIndex] = useState(0);
+  const file = files[activeFileIndex] || null;
   const [meta, setMeta] = useState<MetaFields>({ title: '', author: '', subject: '', keywords: '', creator: '' });
   const [currentMeta, setCurrentMeta] = useState<Partial<MetaFields>>({});
   const [showCurrent, setShowCurrent] = useState(false);
@@ -26,10 +29,9 @@ export const MetadataTool: React.FC = () => {
   const [result, setResult] = useState<{ blob: Blob; name: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const onFiles = async (files: File[]) => {
-    const f = files[0];
-    setFile(f); setResult(null); setError(null);
-    // Try to read existing metadata
+  const onFiles = async (incoming: File[]) => {
+    addFiles(incoming); setResult(null); setError(null);
+    const f = incoming[0];
     try {
       const info = await PDFEngine.getInfo(f);
       const existing: Partial<MetaFields> = {};
@@ -54,7 +56,7 @@ export const MetadataTool: React.FC = () => {
 
   const clearAll = () => setMeta({ title: '', author: '', subject: '', keywords: '', creator: '' });
 
-  const reset = () => { setFile(null); setResult(null); setError(null); setMeta({ title: '', author: '', subject: '', keywords: '', creator: '' }); setCurrentMeta({}); };
+  const reset = () => { clearFiles(); setResult(null); setError(null); setMeta({ title: '', author: '', subject: '', keywords: '', creator: '' }); setCurrentMeta({}); };
 
   const hasCurrentMeta = Object.values(currentMeta).some(Boolean);
 
@@ -93,13 +95,23 @@ export const MetadataTool: React.FC = () => {
             <div className="flex-1 min-w-0">
               <p className="font-bold truncate" style={{ color: 'var(--color-text)' }}>{file.name}</p>
               <p className="text-xs mt-1" style={{ color: 'var(--color-muted)' }}>{(file.size / 1024).toFixed(1)} KB</p>
+              {files.length > 1 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {files.map((f, idx) => (
+                    <button key={idx} onClick={() => setActiveFileIndex(idx)} 
+                      className={`text-[10px] px-2 py-0.5 rounded-full border transition-all ${idx === activeFileIndex ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200'}`}>
+                      File {idx + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
               {hasCurrentMeta && (
                 <button onClick={() => setShowCurrent(!showCurrent)} className="flex items-center gap-1 mt-1.5 text-xs font-semibold" style={{ color: 'var(--color-brand)' }}>
                   <Eye size={11} /> {showCurrent ? 'Hide' : 'View'} current metadata
                 </button>
               )}
             </div>
-            <button onClick={() => setFile(null)} className="p-2 rounded-xl hover:bg-red-50 transition-colors"><X size={16} color="#ef4444" /></button>
+            <button onClick={() => removeFile(activeFileIndex)} className="p-2 rounded-xl hover:bg-red-50 transition-colors"><X size={16} color="#ef4444" /></button>
           </div>
 
           {showCurrent && hasCurrentMeta && (

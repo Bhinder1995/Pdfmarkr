@@ -4,6 +4,7 @@ import { Plus, X, Shield, ArrowUp, ArrowDown, Loader2, Zap, CheckCircle2, Downlo
 import { DropZone } from '../components/DropZone';
 import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
+import { useFiles } from '../context/FileContext';
 
 interface Result { blob: Blob; name: string; }
 
@@ -15,26 +16,14 @@ const dlBlob = (b: Blob, name: string) => {
 };
 
 export const MergeTool: React.FC = () => {
-  const [files, setFiles] = useState<File[]>([]);
+  const { files, addFiles, removeFile, moveFile, clearFiles } = useFiles();
   const [insertBlank, setInsertBlank] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<File | null>(null);
 
-  const addFiles = useCallback((incoming: File[]) => {
-    setResult(null); setError(null);
-    setFiles(prev => [...prev, ...incoming]);
-  }, []);
-
-  const moveFile = (index: number, dir: -1 | 1) => {
-    if (index + dir < 0 || index + dir >= files.length) return;
-    const arr = [...files];
-    [arr[index], arr[index + dir]] = [arr[index + dir], arr[index]];
-    setFiles(arr);
-  };
-
-  const removeFile = (i: number) => setFiles(prev => prev.filter((_, j) => j !== i));
+  const reset = () => { clearFiles(); setResult(null); setError(null); };
 
   const process = async () => {
     if (files.length < 2) { setError('Please add at least 2 PDF files to merge.'); return; }
@@ -47,7 +36,7 @@ export const MergeTool: React.FC = () => {
     } finally { setProcessing(false); }
   };
 
-  const reset = () => { setFiles([]); setResult(null); setError(null); };
+
 
   if (result) return (
     <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="space-y-5">
