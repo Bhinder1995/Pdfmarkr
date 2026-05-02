@@ -1,0 +1,6 @@
+{
+  "name": "pdfmarkr",
+  "description": "Professional client-side PDF tools. Merge, split, compress, and convert PDFs directly in your browser with pdfmarkr.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
