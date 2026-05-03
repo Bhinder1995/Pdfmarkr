@@ -3,9 +3,9 @@ import * as pdfjs from 'pdfjs-dist';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
 import mammoth from 'mammoth';
 
-import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
-
-pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+// Use CDN worker for maximum stability across deployments and mobile devices
+const PDFJS_VERSION = '5.7.284';
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.min.mjs`;
 
 export interface PageInfo {
   pageNumber: number;

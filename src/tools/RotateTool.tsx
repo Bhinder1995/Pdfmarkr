@@ -6,7 +6,17 @@ import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
 import { useFiles } from '../context/FileContext';
 
-const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
+const dlBlob = (b: Blob, n: string) => {
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u; a.download = n; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  }, 2000);
+};
 
 export const RotateTool: React.FC = () => {
   const { files, addFiles, removeFile, clearFiles } = useFiles();
@@ -84,7 +94,7 @@ export const RotateTool: React.FC = () => {
             <button onClick={() => removeFile(activeFileIndex)} className="p-2 rounded-xl hover:bg-red-50 transition-colors"><X size={16} color="#ef4444" /></button>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Target pages */}
             <div className="p-5 rounded-2xl space-y-3" style={{ background: 'var(--color-surface-2)', border: '1.5px solid var(--color-border)' }}>
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Target Pages</p>

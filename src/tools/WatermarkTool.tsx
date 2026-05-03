@@ -6,7 +6,17 @@ import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
 import { useFiles } from '../context/FileContext';
 
-const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
+const dlBlob = (b: Blob, n: string) => {
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u; a.download = n; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  }, 2000);
+};
 
 type WatermarkPos = 'diagonal' | 'center' | 'bottom';
 type WatermarkOpacity = 'light' | 'medium' | 'dark';
@@ -122,7 +132,7 @@ export const WatermarkTool: React.FC = () => {
           </div>
 
           {/* Advanced options */}
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-4">
             {/* Position */}
             <div className="p-4 rounded-2xl space-y-2" style={{ background: 'var(--color-surface-2)', border: '1.5px solid var(--color-border)' }}>
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Position</p>

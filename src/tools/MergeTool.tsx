@@ -11,8 +11,13 @@ interface Result { blob: Blob; name: string; }
 const dlBlob = (b: Blob, name: string) => {
   const u = URL.createObjectURL(b);
   const a = document.createElement('a');
-  a.href = u; a.download = name; a.click();
-  URL.revokeObjectURL(u);
+  a.href = u; a.download = name; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  }, 2000);
 };
 
 export const MergeTool: React.FC = () => {
@@ -47,7 +52,7 @@ export const MergeTool: React.FC = () => {
           <p className="text-xs" style={{ color: '#047857' }}>{files.length} PDFs merged into one file ({(result.blob.size / 1024).toFixed(0)} KB)</p>
         </div>
       </div>
-      <div className="p-5 rounded-2xl flex items-center gap-4" style={{ background: 'var(--color-surface)', border: '1.5px solid var(--color-border)' }}>
+      <div className="p-5 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4" style={{ background: 'var(--color-surface)', border: '1.5px solid var(--color-border)' }}>
         <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--color-brand-light)' }}>
           <Download size={22} color="var(--color-brand)" />
         </div>
@@ -55,7 +60,7 @@ export const MergeTool: React.FC = () => {
           <p className="font-bold" style={{ color: 'var(--color-text)' }}>{result.name}</p>
           <p className="text-xs mt-0.5" style={{ color: 'var(--color-muted)' }}>{(result.blob.size / 1024).toFixed(1)} KB</p>
         </div>
-        <button onClick={() => dlBlob(result.blob, result.name)} className="btn-primary" style={{ padding: '10px 20px' }}>
+        <button onClick={() => dlBlob(result.blob, result.name)} className="btn-primary w-full sm:w-auto justify-center" style={{ padding: '10px 20px' }}>
           <Download size={16} /> Download
         </button>
       </div>
@@ -70,7 +75,7 @@ export const MergeTool: React.FC = () => {
       ) : (
         <>
           {/* File grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {files.map((f, i) => (
               <motion.div key={`${f.name}-${i}`} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
                 className="relative group flex flex-col">
@@ -161,9 +166,9 @@ export const MergeTool: React.FC = () => {
               <span className="font-bold truncate" style={{ color: 'var(--color-text)' }}>{preview.name}</span>
               <button onClick={() => setPreview(null)} className="p-2 rounded-xl hover:bg-slate-100"><X size={18} /></button>
             </div>
-            <div className="overflow-auto flex-1 p-6 bg-slate-100">
-              <div className="bg-white rounded-xl overflow-hidden shadow-xl mx-auto" style={{ maxWidth: 500 }}>
-                <PdfCanvas file={preview} scale={1.2} className="w-full" />
+            <div className="overflow-auto flex-1 p-4 sm:p-6 bg-slate-100 flex items-start justify-center">
+              <div className="bg-white rounded-xl overflow-hidden shadow-2xl w-full" style={{ maxWidth: 600 }}>
+                <PdfCanvas file={preview} scale={1.5} className="w-full h-auto" />
               </div>
             </div>
             <div className="px-6 py-4 flex justify-end" style={{ borderTop: '1px solid var(--color-border)' }}>

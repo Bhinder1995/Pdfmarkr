@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { X, Loader2, Zap, CheckCircle2, Download, Shield } from 'lucide-react';
+import { X, Loader2, Zap, CheckCircle2, Download, Shield, FileOutput } from 'lucide-react';
 import { DropZone } from '../components/DropZone';
 import { PDFEngine } from '../services/pdfEngine';
 import { useFiles } from '../context/FileContext';
 
 type Result = { blob: Blob; name: string };
 
-const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
+const dlBlob = (b: Blob, n: string) => {
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u; a.download = n; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  }, 2000);
+};
 
 export const WordToPdfTool: React.FC = () => {
   const { files, addFiles, removeFile, clearFiles } = useFiles();

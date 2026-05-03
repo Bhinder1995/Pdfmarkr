@@ -103,8 +103,14 @@ export const Navbar: React.FC = () => {
                   {convert.map(t => <Link key={t.id} to={t.path} onClick={() => setMobileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-600 bg-slate-50 hover:bg-blue-50" style={{ color:'var(--color-text)', fontWeight:600 }}><t.icon size={15} />{t.name}</Link>)}
                 </div>
               </div>
-              <div className="flex gap-3 flex-wrap">
-                <Link to="/guides" onClick={() => setMobileOpen(false)} className="text-sm font-600" style={{ color:'var(--color-muted)' }}>Guides</Link>
+              <div>
+                <p className="mono-label mb-3">Advanced</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {advanced.map(t => <Link key={t.id} to={t.path} onClick={() => setMobileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-600 bg-slate-50 hover:bg-blue-50" style={{ color:'var(--color-text)', fontWeight:600 }}><t.icon size={15} />{t.name}</Link>)}
+                </div>
+              </div>
+              <div className="flex gap-4 pt-2 border-t border-slate-100 flex-wrap">
+                <Link to="/guides" onClick={() => setMobileOpen(false)} className="text-sm font-700" style={{ color:'var(--color-brand)' }}>Guides</Link>
                 <Link to="/about" onClick={() => setMobileOpen(false)} className="text-sm font-600" style={{ color:'var(--color-muted)' }}>About</Link>
                 <Link to="/privacy" onClick={() => setMobileOpen(false)} className="text-sm font-600" style={{ color:'var(--color-muted)' }}>Privacy</Link>
               </div>

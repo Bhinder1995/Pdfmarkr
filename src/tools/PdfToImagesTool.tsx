@@ -6,7 +6,26 @@ import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
 import { useFiles } from '../context/FileContext';
 
-const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
+import JSZip from 'jszip';
+
+const dlBlob = (b: Blob, n: string) => {
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u; a.download = n; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  }, 2000);
+};
+
+const dlZip = async (results: { blob: Blob; name: string }[], baseName: string) => {
+  const zip = new JSZip();
+  results.forEach(r => zip.file(r.name, r.blob));
+  const content = await zip.generateAsync({ type: 'blob' });
+  dlBlob(content, `${baseName}-images.zip`);
+};
 
 type ImgFormat = 'png' | 'jpeg';
 type ImgQuality = 'high' | 'medium' | 'low';
@@ -43,7 +62,7 @@ export const PdfToImagesTool: React.FC = () => {
   };
 
   const reset = () => { clearFiles(); setResults([]); setError(null); setProgress(0); };
-  const downloadAll = () => results.forEach(r => dlBlob(r.blob, r.name));
+  const downloadAll = () => dlZip(results, file?.name.replace(/\.pdf$/i, '') || 'images');
 
   if (results.length > 0) return (
     <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="space-y-5">
@@ -57,7 +76,7 @@ export const PdfToImagesTool: React.FC = () => {
         </div>
         {results.length > 1 && (
           <button onClick={downloadAll} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.8rem' }}>
-            <Download size={14} /> Download All
+            <Download size={14} /> Download ZIP
           </button>
         )}
       </div>
@@ -113,7 +132,7 @@ export const PdfToImagesTool: React.FC = () => {
           </div>
 
           {/* Options */}
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Format */}
             <div className="p-5 rounded-2xl space-y-3" style={{ background: 'var(--color-surface-2)', border: '1.5px solid var(--color-border)' }}>
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Image Format</p>

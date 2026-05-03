@@ -118,7 +118,7 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
           style={{ width:256, background:'var(--color-surface)', borderRight:'1.5px solid var(--color-border)', minHeight:'100vh' }}
         >
           <div className="flex items-center justify-between mb-8">
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2" onClick={() => setSidebar(false)}>
               <div className="w-8 h-8 flex items-center justify-center">
                 <Logo />
               </div>
@@ -146,13 +146,13 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile Header */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-3" style={{ borderBottom:'1px solid var(--color-border)', background:'var(--color-surface)' }}>
-          <button onClick={() => setSidebar(true)} className="p-2 rounded-xl hover:bg-slate-100"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-2.5 glass shadow-sm" style={{ borderBottom:'1px solid var(--color-border)' }}>
+          <button onClick={() => setSidebar(true)} className="p-2 -ml-2 rounded-xl active:bg-slate-100 transition-colors" aria-label="Open menu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="16" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
           <div className="flex flex-col items-center">
-            <span className="font-bold text-sm" style={{ color:'var(--color-text)' }}>{tool?.name}</span>
-            {toolGuide && <Link to={`/guides/${toolGuide.slug}`} className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1" style={{ color:'var(--color-brand)' }}><BookOpen size={10} /> Read Guide</Link>}
+            <span className="font-bold text-sm tracking-tight" style={{ color:'var(--color-text)' }}>{tool?.name}</span>
+            {toolGuide && <Link to={`/guides/${toolGuide.slug}`} className="text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 opacity-70" style={{ color:'var(--color-brand)' }}><BookOpen size={9} /> Guide</Link>}
           </div>
-          <button onClick={() => navigate('/')} className="p-2 rounded-xl hover:bg-slate-100"><ArrowLeft size={18} /></button>
+          <button onClick={() => navigate('/')} className="p-2 -mr-2 rounded-xl active:bg-slate-100 transition-colors" aria-label="Go home"><ArrowLeft size={18} /></button>
         </div>
 
         <main className="flex-1 p-4 sm:p-6 lg:p-10 max-w-5xl mx-auto w-full">
@@ -165,18 +165,18 @@ export const ToolWorkspace: React.FC<{ type: ToolType }> = ({ type }) => {
 
           {/* Tool Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between gap-3 mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{ background:'linear-gradient(135deg,#3b82f6,#6366f1)' }}>
-                  {tool && <tool.icon size={24} />}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0" style={{ background:'linear-gradient(135deg,#3b82f6,#6366f1)' }}>
+                  {tool && <tool.icon size={28} />}
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold" style={{ color:'var(--color-text)' }}>{tool?.name}</h1>
-                  <p className="text-sm" style={{ color:'var(--color-muted)' }}>{seo?.description?.split('.')[0]}.</p>
+                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color:'var(--color-text)' }}>{tool?.name}</h1>
+                  <p className="text-sm line-clamp-1" style={{ color:'var(--color-muted)' }}>{seo?.description?.split('.')[0]}.</p>
                 </div>
               </div>
               {toolGuide && (
-                <Link to={`/guides/${toolGuide.slug}`} className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm transition-all hover:bg-blue-50 border border-slate-200" style={{ color: 'var(--color-brand)' }}>
+                <Link to={`/guides/${toolGuide.slug}`} className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all hover:bg-blue-50 border border-slate-200" style={{ color: 'var(--color-brand)' }}>
                   <BookOpen size={16} /> How to Use
                 </Link>
               )}

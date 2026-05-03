@@ -6,8 +6,24 @@ import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
 import { useFiles } from '../context/FileContext';
 
+import JSZip from 'jszip';
+
 interface Result { blob: Blob; name: string; }
-const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
+const dlBlob = (b: Blob, n: string) => {
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u; a.download = n; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(u); }, 2000);
+};
+
+const dlZip = async (results: Result[], baseName: string) => {
+  const zip = new JSZip();
+  results.forEach(r => zip.file(r.name, r.blob));
+  const content = await zip.generateAsync({ type: 'blob' });
+  dlBlob(content, `${baseName}-all-pages.zip`);
+};
 type SplitMode = 'all' | 'odd' | 'even' | 'range';
 
 export const SplitTool: React.FC = () => {
@@ -51,8 +67,8 @@ export const SplitTool: React.FC = () => {
           </div>
         </div>
         {results.length > 1 && (
-          <button onClick={() => results.forEach(r => dlBlob(r.blob, r.name))} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.8rem' }}>
-            <Download size={14} /> Download All
+          <button onClick={() => dlZip(results, file?.name.replace(/\.pdf$/i, '') || 'split')} className="btn-primary" style={{ padding: '8px 16px', fontSize: '0.8rem' }}>
+            <Download size={14} /> Download ZIP
           </button>
         )}
       </div>
@@ -105,7 +121,7 @@ export const SplitTool: React.FC = () => {
 
           <div className="p-5 rounded-2xl space-y-4" style={{ background: 'var(--color-surface-2)', border: '1.5px solid var(--color-border)' }}>
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Split Mode</p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2">
               {([
                 { value: 'all' as SplitMode, label: 'All Pages', desc: 'One file per page' },
                 { value: 'odd' as SplitMode, label: 'Odd Pages', desc: 'Pages 1, 3, 5…' },

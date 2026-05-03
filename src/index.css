@@ -292,5 +292,12 @@
 @media (max-width: 640px) {
   .btn-primary { padding: 11px 20px; font-size: 0.85rem; }
   .drop-zone { padding: 40px 20px; }
-  .tool-card { padding: 20px 18px; }
+  .tool-card { padding: 22px 20px; }
+  .mono-label { font-size: 0.6rem; letter-spacing: 0.12em; }
+}
+
+@media (max-width: 400px) {
+  .btn-primary { padding: 10px 16px; font-size: 0.8rem; }
+  .tool-card { padding: 18px 16px; }
+  h1 { font-size: 1.8rem !important; }
 }

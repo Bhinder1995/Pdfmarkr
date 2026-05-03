@@ -6,7 +6,17 @@ import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
 import { useFiles } from '../context/FileContext';
 
-const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
+const dlBlob = (b: Blob, n: string) => {
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u; a.download = n; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  }, 2000);
+};
 
 export const ExtractTextTool: React.FC = () => {
   const { files, addFiles, removeFile, clearFiles } = useFiles();
@@ -83,12 +93,12 @@ export const ExtractTextTool: React.FC = () => {
                     <p className="text-xs" style={{ color: '#047857' }}>{wordCount.toLocaleString()} words · {charCount.toLocaleString()} characters</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={copyText} className="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                <div className="flex flex-wrap items-center gap-2">
+                  <button onClick={copyText} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg transition-colors"
                     style={{ background: copied ? '#d1fae5' : '#eff6ff', color: copied ? '#065f46' : '#1d4ed8' }}>
                     <Copy size={13} /> {copied ? 'Copied!' : 'Copy'}
                   </button>
-                  <button onClick={downloadTxt} className="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg transition-colors"
+                  <button onClick={downloadTxt} className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 text-xs font-bold px-3 py-2 rounded-lg transition-colors"
                     style={{ background: '#eff6ff', color: '#1d4ed8' }}>
                     <Download size={13} /> .txt
                   </button>
@@ -101,7 +111,7 @@ export const ExtractTextTool: React.FC = () => {
                   <span className="text-xs" style={{ color: 'var(--color-muted)' }}>{wordCount} words</span>
                 </div>
                 <textarea readOnly value={text}
-                  className="w-full h-72 p-4 text-sm font-mono resize-none"
+                  className="w-full h-80 sm:h-72 p-4 text-sm font-mono resize-none leading-relaxed"
                   style={{ background: 'var(--color-surface)', color: 'var(--color-text)', outline: 'none' }} />
               </div>
 

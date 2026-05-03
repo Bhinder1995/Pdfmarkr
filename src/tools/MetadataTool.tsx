@@ -6,7 +6,17 @@ import { PdfCanvas } from '../components/PdfCanvas';
 import { PDFEngine } from '../services/pdfEngine';
 import { useFiles } from '../context/FileContext';
 
-const dlBlob = (b: Blob, n: string) => { const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = n; a.click(); URL.revokeObjectURL(u); };
+const dlBlob = (b: Blob, n: string) => {
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u; a.download = n; a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  }, 2000);
+};
 
 type MetaFields = { title: string; author: string; subject: string; keywords: string; creator: string };
 
@@ -127,17 +137,17 @@ export const MetadataTool: React.FC = () => {
           )}
 
           <div className="p-5 rounded-2xl space-y-4" style={{ background: 'var(--color-surface-2)', border: '1.5px solid var(--color-border)' }}>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-muted)' }}>Edit PDF Properties</p>
-              <button onClick={clearAll} className="text-xs font-bold px-3 py-1.5 rounded-lg transition-colors" style={{ background: '#fff1f2', color: '#e11d48' }}>
-                Clear All (Anonymize)
+              <button onClick={clearAll} className="w-full sm:w-auto text-[10px] sm:text-xs font-bold px-3 py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5" style={{ background: '#fff1f2', color: '#e11d48', border: '1px solid #fecdd3' }}>
+                <Shield size={12} /> Clear All (Anonymize)
               </button>
             </div>
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {FIELDS.map(f => (
                 <div key={f.key} className={f.key === 'subject' || f.key === 'keywords' ? 'sm:col-span-2' : ''}>
                   <label className="block text-xs font-bold mb-1.5" style={{ color: 'var(--color-text)' }}>{f.label}</label>
-                  <input className="w-full rounded-xl px-4 py-3 text-sm"
+                  <input className="w-full rounded-xl px-4 py-3 text-sm focus-ring"
                     style={{ border: '1.5px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text)' }}
                     placeholder={f.placeholder} value={meta[f.key]} onChange={e => setMeta(m => ({ ...m, [f.key]: e.target.value }))} />
                 </div>
