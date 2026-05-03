@@ -3,9 +3,9 @@ import * as pdfjs from 'pdfjs-dist';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
 import mammoth from 'mammoth';
 
-// Use CDN worker for maximum stability across deployments and mobile devices
-const PDFJS_VERSION = '5.7.284';
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.min.mjs`;
+// Use local worker for absolute reliability on mobile devices
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+const PDFJS_VERSION = '3.11.174';
 
 export interface PageInfo {
   pageNumber: number;
@@ -25,13 +25,34 @@ export interface PDFInfo {
   fileSizeKB: number;
 }
 
+const getArrayBuffer = async (file: File): Promise<ArrayBuffer> => {
+  if (file.arrayBuffer) return await file.arrayBuffer();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as ArrayBuffer);
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+};
+
 export const PDFEngine = {
 
   /** Read metadata and page info from a PDF */
   async getInfo(file: File): Promise<PDFInfo> {
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-    const pdfJsDoc = await pdfjs.getDocument({ data: arrayBuffer.slice(0) }).promise;
+    try {
+      const arrayBuffer = await getArrayBuffer(file);
+      const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+      
+      let pdfJsDoc;
+      try {
+        pdfJsDoc = await pdfjs.getDocument({ 
+          data: arrayBuffer.slice(0),
+          cMapUrl: `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/cmaps/`,
+          cMapPacked: true,
+        }).promise;
+      } catch (e) {
+        console.warn('PDF.js getDocument failed, falling back to basic info:', e);
+      }
 
     const pages: PageInfo[] = [];
     for (let i = 0; i < pdf.getPageCount(); i++) {
@@ -40,17 +61,21 @@ export const PDFEngine = {
       pages.push({ pageNumber: i + 1, width: Math.round(width), height: Math.round(height) });
     }
 
-    return {
-      pageCount: pdf.getPageCount(),
-      title:    pdf.getTitle()    || '',
-      author:   pdf.getAuthor()   || '',
-      subject:  pdf.getSubject()  || '',
-      keywords: pdf.getKeywords() || '',
-      creator:  pdf.getCreator()  || '',
-      producer: pdf.getProducer() || '',
-      pages,
-      fileSizeKB: Math.round(file.size / 1024),
-    };
+      return {
+        pageCount: pdf.getPageCount(),
+        title:    pdf.getTitle()    || '',
+        author:   pdf.getAuthor()   || '',
+        subject:  pdf.getSubject()  || '',
+        keywords: pdf.getKeywords() || '',
+        creator:  pdf.getCreator()  || '',
+        producer: pdf.getProducer() || '',
+        pages,
+        fileSizeKB: Math.round(file.size / 1024),
+      };
+    } catch (err) {
+      console.error('PDFEngine.getInfo failed:', err);
+      throw err;
+    }
   },
 
   /** Merge multiple PDFs — supports reordering and inserting blank pages */
@@ -58,7 +83,7 @@ export const PDFEngine = {
     const merged = await PDFDocument.create();
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      const buf = await item.file.arrayBuffer();
+      const buf = await getArrayBuffer(item.file);
       const src = await PDFDocument.load(buf);
       const indices = item.pages ?? src.getPageIndices();
       const copied = await merged.copyPages(src, indices);
@@ -75,7 +100,7 @@ export const PDFEngine = {
 
   /** Split PDF — all pages into individual files */
   async split(file: File): Promise<{ data: Uint8Array; name: string }[]> {
-    const buf = await file.arrayBuffer();
+    const buf = await getArrayBuffer(file);
     const src = await PDFDocument.load(buf);
     const results: { data: Uint8Array; name: string }[] = [];
     const base = file.name.replace(/\.pdf$/i, '');
@@ -90,7 +115,7 @@ export const PDFEngine = {
 
   /** Extract a custom range like "1, 3-5, 8" or "odd" / "even" */
   async extractRange(file: File, range: string): Promise<Uint8Array> {
-    const buf = await file.arrayBuffer();
+    const buf = await getArrayBuffer(file);
     const src = await PDFDocument.load(buf);
     const total = src.getPageCount();
 
@@ -123,7 +148,7 @@ export const PDFEngine = {
 
   /** Rotate pages — optionally target 'all', 'odd', or 'even' */
   async rotate(file: File, angle: 90 | 180 | 270, targetPages: 'all'|'odd'|'even' = 'all'): Promise<Uint8Array> {
-    const buf = await file.arrayBuffer();
+    const buf = await getArrayBuffer(file);
     const doc = await PDFDocument.load(buf);
     doc.getPages().forEach((page, i) => {
       const pageNum = i + 1;
@@ -139,7 +164,7 @@ export const PDFEngine = {
 
   /** Compress — re-save with object streams, and optionally max privacy */
   async compress(file: File, level: 'standard'|'maximum' = 'standard'): Promise<{ data: Uint8Array; savedKB: number }> {
-    const buf = await file.arrayBuffer();
+    const buf = await getArrayBuffer(file);
     const doc = await PDFDocument.load(buf);
     
     if (level === 'maximum') {
@@ -159,8 +184,12 @@ export const PDFEngine = {
 
   /** Extract all text, page-by-page */
   async extractText(file: File): Promise<string> {
-    const buf = await file.arrayBuffer();
-    const pdfDoc = await pdfjs.getDocument({ data: buf }).promise;
+    const buf = await getArrayBuffer(file);
+    const pdfDoc = await pdfjs.getDocument({ 
+      data: buf,
+      cMapUrl: `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/cmaps/`,
+      cMapPacked: true,
+    }).promise;
     const parts: string[] = [];
     for (let i = 1; i <= pdfDoc.numPages; i++) {
       const page = await pdfDoc.getPage(i);
@@ -176,7 +205,7 @@ export const PDFEngine = {
     file: File,
     meta: { title?: string; author?: string; subject?: string; keywords?: string; creator?: string }
   ): Promise<Uint8Array> {
-    const buf = await file.arrayBuffer();
+    const buf = await getArrayBuffer(file);
     const doc = await PDFDocument.load(buf);
     if (meta.title)    doc.setTitle(meta.title);
     if (meta.author)   doc.setAuthor(meta.author);
@@ -202,7 +231,7 @@ export const PDFEngine = {
 
   /** Word (.docx) → PDF using mammoth text extraction + pdf-lib layout */
   async wordToPdf(file: File, watermarkText?: string): Promise<Uint8Array> {
-    const buf = await file.arrayBuffer();
+    const buf = await getArrayBuffer(file);
     const { value: rawText } = await mammoth.extractRawText({ arrayBuffer: buf });
 
     const doc = await PDFDocument.create();
@@ -273,8 +302,12 @@ export const PDFEngine = {
     scale: number,
     onProgress?: (progress: number) => void
   ): Promise<{ blob: Blob; name: string; pageNum: number }[]> {
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
+    const arrayBuffer = await getArrayBuffer(file);
+    const pdf = await pdfjs.getDocument({ 
+      data: arrayBuffer,
+      cMapUrl: `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/cmaps/`,
+      cMapPacked: true,
+    }).promise;
     const numPages = pdf.numPages;
     const results: { blob: Blob; name: string; pageNum: number }[] = [];
 
@@ -312,7 +345,7 @@ export const PDFEngine = {
     file: File,
     options: { text: string; position: 'diagonal' | 'center' | 'bottom'; opacity: number; fontSize: number; color: string }
   ): Promise<Uint8Array> {
-    const arrayBuffer = await file.arrayBuffer();
+    const arrayBuffer = await getArrayBuffer(file);
     const doc = await PDFDocument.load(arrayBuffer);
     const font = await doc.embedFont(StandardFonts.HelveticaBold);
     

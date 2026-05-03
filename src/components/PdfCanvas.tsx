@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as pdfjs from 'pdfjs-dist';
 import { Loader2, AlertCircle } from 'lucide-react';
 
-const PDFJS_VERSION = '5.7.284';
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.min.mjs`;
+// Use local worker for absolute reliability on mobile devices
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+const PDFJS_VERSION = '3.11.174';
 
 interface Props { file: File; scale?: number; className?: string; }
 
@@ -21,7 +22,18 @@ export const PdfCanvas: React.FC<Props> = ({ file, scale = 1.0, className = '' }
         if (!file || (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf')) {
           setStatus('error'); return;
         }
-        const buf = await file.arrayBuffer();
+        let buf: ArrayBuffer;
+        if (file.arrayBuffer) {
+          buf = await file.arrayBuffer();
+        } else {
+          buf = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as ArrayBuffer);
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(file);
+          });
+        }
+
         if (cancelled) return;
 
         const loadingTask = pdfjs.getDocument({ 
@@ -35,8 +47,8 @@ export const PdfCanvas: React.FC<Props> = ({ file, scale = 1.0, className = '' }
         const page = await pdf.getPage(1);
         if (cancelled) return;
 
-        // Handle high-DPI screens
-        const dpr = window.devicePixelRatio || 1;
+        // Handle high-DPI screens but cap at 2x to save memory on mobile
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
         const vp = page.getViewport({ scale: scale * dpr });
         
         const canvas = canvasRef.current;
