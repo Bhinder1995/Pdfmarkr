@@ -57,7 +57,7 @@ export const DropZone: React.FC<Props> = ({
           <UploadCloud size={32} />
         </div>
         <div>
-          <p className="text-lg" style={{ color: 'var(--color-text)', fontWeight: 700 }}>{label}</p>
+          <p className="text-lg md:text-xl" style={{ color: 'var(--color-text)', fontWeight: 700 }}>{label}</p>
           <p className="text-sm mt-1" style={{ color: 'var(--color-muted)' }}>{sublabel}</p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-3 mt-1">

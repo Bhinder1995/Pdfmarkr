@@ -30,7 +30,7 @@ export const GuideLayout: React.FC = () => {
   return (
     <div className="min-h-screen" style={{ background: 'var(--color-page-bg)' }}>
       <Helmet>
-        <title>{guide.title} | PDFMarkr Guides</title>
+        <title>{guide.title}</title>
         <meta name="description" content={guide.description} />
         <meta name="keywords" content={guide.keywords.join(',')} />
         <link rel="canonical" href={`https://pdfmarkr.com/guides/${guide.slug}`} />

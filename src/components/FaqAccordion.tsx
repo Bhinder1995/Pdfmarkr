@@ -12,12 +12,14 @@ export const FaqAccordion: React.FC<{ faqs: FAQ[] }> = ({ faqs }) => {
           <button
             className="w-full flex items-center justify-between px-6 py-4 text-left focus-ring"
             onClick={() => setOpen(open === i ? null : i)}
+            aria-expanded={open === i}
+            aria-controls={`faq-answer-${i}`}
           >
             <span className="font-700 text-sm pr-4" style={{ fontWeight: 700, color: 'var(--color-text)' }}>{faq.question}</span>
             <ChevronDown size={18} style={{ color: 'var(--color-muted)', transform: open === i ? 'rotate(180deg)' : 'none', transition: 'transform 0.25s ease', flexShrink: 0 }} />
           </button>
           {open === i && (
-            <div className="px-6 pb-5">
+            <div id={`faq-answer-${i}`} className="px-6 pb-5" role="region">
               <p className="text-sm leading-relaxed" style={{ color: 'var(--color-muted)' }}>{faq.answer}</p>
             </div>
           )}

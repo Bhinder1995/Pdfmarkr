@@ -8,7 +8,7 @@ interface LogoProps {
 
 export const Logo: React.FC<LogoProps> = ({ className = '', width = '100%', height = '100%' }) => {
   return (
-    <svg viewBox="0 0 100 100" width={width} height={height} className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 100 100" width={width} height={height} className={className} fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PDFMarkr Logo">
       {/* Document Outline */}
       <path d="M 30 15 H 60 L 75 30 V 75 Q 75 85 65 85 H 30 Q 20 85 20 75 V 25 Q 20 15 30 15 Z" stroke="#E11D48" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="white" />
       {/* Folded corner */}

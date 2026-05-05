@@ -60,8 +60,8 @@ export const MergeTool: React.FC = () => {
           <p className="font-bold" style={{ color: 'var(--color-text)' }}>{result.name}</p>
           <p className="text-xs mt-0.5" style={{ color: 'var(--color-muted)' }}>{(result.blob.size / 1024).toFixed(1)} KB</p>
         </div>
-        <button onClick={() => dlBlob(result.blob, result.name)} className="btn-primary w-full sm:w-auto justify-center" style={{ padding: '10px 20px' }}>
-          <Download size={16} /> Download
+        <button onClick={() => dlBlob(result.blob, result.name)} className="btn-primary w-full sm:w-auto justify-center" style={{ padding: '14px 28px' }}>
+          <Download size={18} /> Download
         </button>
       </div>
       <button onClick={reset} className="btn-ghost w-full justify-center">Merge More Files</button>
@@ -96,18 +96,19 @@ export const MergeTool: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-1 mt-1.5">
                   <button onClick={() => moveFile(i, -1)} disabled={i === 0}
-                    className="flex-1 h-7 rounded-lg flex items-center justify-center transition-colors disabled:opacity-30"
+                    className="flex-1 h-10 rounded-xl flex items-center justify-center transition-colors disabled:opacity-30"
                     style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}>
-                    <ArrowUp size={12} />
+                    <ArrowUp size={16} />
                   </button>
                   <button onClick={() => moveFile(i, 1)} disabled={i === files.length - 1}
-                    className="flex-1 h-7 rounded-lg flex items-center justify-center transition-colors disabled:opacity-30"
+                    className="flex-1 h-10 rounded-xl flex items-center justify-center transition-colors disabled:opacity-30"
                     style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)' }}>
-                    <ArrowDown size={12} />
+                    <ArrowDown size={16} />
                   </button>
                   <button onClick={() => removeFile(i)}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-red-50">
-                    <X size={12} color="#ef4444" />
+                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors hover:bg-red-50"
+                    style={{ border: '1px solid var(--color-border)' }}>
+                    <X size={16} color="#ef4444" />
                   </button>
                 </div>
               </motion.div>

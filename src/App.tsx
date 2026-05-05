@@ -35,11 +35,17 @@ const Footer = () => (
             <span className="font-bold text-xl" style={{ color: '#e11d48', letterSpacing: '-0.02em' }}>pdf<span style={{ color: 'white' }}>markr</span></span>
           </Link>
           <p className="text-sm leading-relaxed" style={{ color: '#64748b' }}>
-            Edit, convert, share, done. Professional PDF tools that run entirely in your browser. No uploads. No servers. Just fast, private, free processing.
+            Professional-grade, private PDF tools that run entirely in your browser. No uploads, no servers, and 100% free forever. PDFMarkr ensures your sensitive documents never leave your device while providing the speed of local processing.
           </p>
-          <div className="mt-4 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-xs font-semibold text-green-400">All systems private</span>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-green-500/10 border border-green-500/20">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-green-500">Local Engine Active</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-blue-500/10 border border-blue-500/20">
+              <Shield size={10} className="text-blue-500" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-500">Zero-Upload Policy</span>
+            </div>
           </div>
         </div>
         <div>
@@ -72,9 +78,11 @@ const Footer = () => (
         <div>
           <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#475569', letterSpacing: '0.15em' }}>Company</p>
           <ul className="space-y-2">
-            {[['About','/about'],['Privacy','/privacy'],['Terms','/terms'],['Sitemap','/sitemap.xml']].map(([l,h]) => (
+            {[['About','/about'],['Privacy','/privacy'],['Terms','/terms']].map(([l,h]) => (
               <li key={l}><Link to={h} className="text-sm transition-colors hover:text-white" style={{ color: '#64748b' }}>{l}</Link></li>
             ))}
+            <li><a href="/sitemap.xml" target="_blank" className="text-sm transition-colors hover:text-white" style={{ color: '#64748b' }}>Sitemap</a></li>
+            <li><a href="/llms.txt" target="_blank" className="text-sm transition-colors hover:text-white" style={{ color: '#64748b' }}>LLM Info</a></li>
           </ul>
         </div>
       </div>
@@ -114,9 +122,21 @@ const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>PDFMarkr — Free Online PDF Tools | Merge, Split, Compress, Convert</title>
-        <meta name="description" content="Edit, convert, share, done. Professional PDF tools running 100% in your browser. Merge, split, compress, rotate, convert PDF to Word and more. No uploads, no servers, completely private and free." />
+        <title>PDFMarkr — Free Online PDF Tools | No Upload, No Sign-Up, Maximum Privacy</title>
+        <meta name="description" content="Merge, split, compress, rotate, and convert PDFs entirely in your browser. No account, no server uploads, no waiting. 100% private and free professional PDF tools." />
+        <meta name="keywords" content="online PDF tools no upload, browser-based PDF tools, PDF merge split compress, no sign-up PDF tool, free PDF tools any device" />
         <link rel="canonical" href="https://pdfmarkr.com/" />
+        <meta property="og:title" content="PDFMarkr — 100% Free Online PDF Tools | Maximum Privacy" />
+        <meta property="og:description" content="8 professional PDF utilities running entirely in your browser. Merge, compress, and convert PDFs instantly. Zero uploads." />
+        <meta property="og:url" content="https://pdfmarkr.com/" />
+        <meta property="og:image" content="https://pdfmarkr.com/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="PDFMarkr — 100% Free Online PDF Tools" />
+        <meta name="twitter:description" content="Merge, compress, and convert PDFs instantly in your browser. Zero uploads, 100% private." />
+        <meta name="twitter:image" content="https://pdfmarkr.com/og-image.png" />
       </Helmet>
 
       {/* Hero */}
@@ -130,8 +150,8 @@ const HomePage = () => {
             </div>
 
             <h1 className="font-bold leading-tight mb-6" style={{ fontSize: 'clamp(2.2rem,5vw,3.75rem)', color: 'var(--color-text)', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
-              Edit, convert, share,<br />
-              <span className="gradient-text">done.</span>
+              Professional PDF Tools,<br />
+              <span className="gradient-text">100% Private.</span>
             </h1>
 
             <p className="text-lg leading-relaxed mb-10 max-w-2xl mx-auto" style={{ color: 'var(--color-muted)' }}>
@@ -230,8 +250,8 @@ const HomePage = () => {
       <section style={{ background: 'var(--color-surface)', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)' }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
           <div className="text-center mb-14">
-            <p className="mono-label mb-3">Why PDFMarkr</p>
-            <h2 className="text-3xl font-bold" style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}>Built different. Built private.</h2>
+            <p className="mono-label mb-3">Enterprise-Grade Security</p>
+            <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: 'var(--color-text)', letterSpacing: '-0.02em' }}>Privacy by Design. No Cloud Required.</h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((f, i) => (
@@ -244,6 +264,42 @@ const HomePage = () => {
                 <p className="text-sm leading-relaxed" style={{ color: 'var(--color-muted)' }}>{f.desc}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SEO Footer / Internal Links */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16" style={{ borderTop: '1px solid var(--color-border)' }}>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+          <div className="col-span-2">
+            <h3 className="text-lg font-bold mb-4" style={{ color: 'var(--color-text)' }}>Professional PDF Suite</h3>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-muted)' }}>
+              PDFMarkr provides a comprehensive suite of utilities designed for professionals who prioritize data privacy. Our tools use advanced WebAssembly technology to process documents directly in your browser RAM, ensuring your sensitive files never touch our servers.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-brand)' }}>Top Tools</h4>
+            <ul className="space-y-2">
+              <li><Link to="/merge-pdf" className="text-sm hover:text-blue-600 transition-colors" style={{ color: 'var(--color-muted)' }}>Merge PDF Files</Link></li>
+              <li><Link to="/compress-pdf" className="text-sm hover:text-blue-600 transition-colors" style={{ color: 'var(--color-muted)' }}>Reduce PDF Size</Link></li>
+              <li><Link to="/pdf-to-word" className="text-sm hover:text-blue-600 transition-colors" style={{ color: 'var(--color-muted)' }}>Convert PDF to Word</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-brand)' }}>Converters</h4>
+            <ul className="space-y-2">
+              <li><Link to="/word-to-pdf" className="text-sm hover:text-blue-600 transition-colors" style={{ color: 'var(--color-muted)' }}>DOCX to PDF</Link></li>
+              <li><Link to="/pdf-to-images" className="text-sm hover:text-blue-600 transition-colors" style={{ color: 'var(--color-muted)' }}>Export PDF to JPG</Link></li>
+              <li><Link to="/extract-text" className="text-sm hover:text-blue-600 transition-colors" style={{ color: 'var(--color-muted)' }}>Extract PDF Text</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-brand)' }}>Advanced</h4>
+            <ul className="space-y-2">
+              <li><Link to="/metadata-editor" className="text-sm hover:text-blue-600 transition-colors" style={{ color: 'var(--color-muted)' }}>Edit PDF Metadata</Link></li>
+              <li><Link to="/watermark-pdf" className="text-sm hover:text-blue-600 transition-colors" style={{ color: 'var(--color-muted)' }}>Watermark PDF</Link></li>
+              <li><Link to="/rotate-pdf" className="text-sm hover:text-blue-600 transition-colors" style={{ color: 'var(--color-muted)' }}>Rotate PDF Pages</Link></li>
+            </ul>
           </div>
         </div>
       </section>
