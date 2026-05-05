@@ -3,8 +3,9 @@ import * as pdfjs from 'pdfjs-dist';
 import { Loader2, AlertCircle } from 'lucide-react';
 
 // Use local worker for absolute reliability on mobile devices
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+// Use a more robust worker loading strategy
 const PDFJS_VERSION = '3.11.174';
+const DEFAULT_WORKER_URL = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.min.js`;
 
 interface Props { file: File; scale?: number; className?: string; }
 
@@ -17,21 +18,34 @@ export const PdfCanvas: React.FC<Props> = ({ file, scale = 1.0, className = '' }
     let renderTask: any = null;
     setStatus('loading');
 
+    // Initialize worker once per component lifecycle
+    if (!pdfjs.GlobalWorkerOptions.workerSrc) {
+      pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js' || DEFAULT_WORKER_URL;
+    }
+
     (async () => {
       try {
-        if (!file || (!file.name.toLowerCase().endsWith('.pdf') && file.type !== 'application/pdf')) {
-          setStatus('error'); return;
-        }
+        if (!file) { setStatus('error'); return; }
+        
+        const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+        if (!isPdf) { setStatus('error'); return; }
+
         let buf: ArrayBuffer;
-        if (file.arrayBuffer) {
-          buf = await file.arrayBuffer();
-        } else {
-          buf = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as ArrayBuffer);
-            reader.onerror = reject;
-            reader.readAsArrayBuffer(file);
-          });
+        try {
+          if (file.arrayBuffer) {
+            buf = await file.arrayBuffer();
+          } else {
+            buf = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as ArrayBuffer);
+              reader.onerror = reject;
+              reader.readAsArrayBuffer(file);
+            });
+          }
+        } catch (e) {
+          console.error("Buffer error:", e);
+          if (!cancelled) setStatus('error');
+          return;
         }
 
         if (cancelled) return;
@@ -40,26 +54,38 @@ export const PdfCanvas: React.FC<Props> = ({ file, scale = 1.0, className = '' }
           data: buf,
           cMapUrl: `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/cmaps/`,
           cMapPacked: true,
+          disableAutoFetch: true,
+          disableStream: true,
         });
+        
         const pdf = await loadingTask.promise;
         if (cancelled) return;
 
         const page = await pdf.getPage(1);
         if (cancelled) return;
 
-        // Handle high-DPI screens but cap at 2x to save memory on mobile
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const vp = page.getViewport({ scale: scale * dpr });
+        // Optimized scale for mobile to prevent memory crashes
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2);
         
+        // Cap total scale to avoid massive canvas areas (iOS limit is often 4096px or 16M pixels)
+        let finalScale = scale * dpr;
+        const tempVp = page.getViewport({ scale: finalScale });
+        if (tempVp.width * tempVp.height > 8000000) { // Cap at 8M pixels for safety
+          finalScale = finalScale * Math.sqrt(8000000 / (tempVp.width * tempVp.height));
+        }
+
+        const vp = page.getViewport({ scale: finalScale });
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d', { alpha: false });
+        
+        const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
         if (!ctx) return;
 
         canvas.width = vp.width;
         canvas.height = vp.height;
         
-        // CSS display size should be original scale
+        // CSS display size
         const cssVp = page.getViewport({ scale });
         canvas.style.width = `${cssVp.width}px`;
         canvas.style.height = `${cssVp.height}px`;
@@ -73,7 +99,7 @@ export const PdfCanvas: React.FC<Props> = ({ file, scale = 1.0, className = '' }
         await renderTask.promise;
         if (!cancelled) setStatus('done');
       } catch (err) {
-        console.error('PDF Preview Error:', err);
+        console.error('PDF Preview System Error:', err);
         if (!cancelled) setStatus('error');
       }
     })();
